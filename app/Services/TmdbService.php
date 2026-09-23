@@ -114,7 +114,7 @@ class TmdbService
     {
         $document = new DOMDocument;
         libxml_use_internal_errors(true);
-        $document->loadHTML($html);
+        $document->loadHTML('<?xml encoding="UTF-8">' . $html);
         libxml_clear_errors();
 
         return new DOMXPath($document);
