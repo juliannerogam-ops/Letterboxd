@@ -1,6 +1,6 @@
 <h1>Se connecter</h1>
 
-<form action="{{ route('user.login') }}" method="POST">
+<form action="{{ route('login') }}" method="POST">
     @csrf
     <label for="email">Email :</label>
     <input type="email" name="email" id="email" value="{{ old('email') }}" required>
