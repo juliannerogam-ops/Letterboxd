@@ -10,6 +10,8 @@ use App\Http\Requests\FilmRequest;
 
 Route::prefix('film')->name("film.")->group(function () {
     Route::get('/', [FilmController::class, 'list'])->name("list");
+    Route::get('/import', [FilmController::class, 'importView'])->name("import_view");
+    Route::post('/import', [FilmController::class, 'importFromUrl'])->name("import");
     Route::get("/{id}", [FilmController::class, 'show'])->whereUuid('id')->name("show");
 
     Route::get('/create', function () {

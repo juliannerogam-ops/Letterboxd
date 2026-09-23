@@ -1,5 +1,16 @@
 <h1>Créer un film</h1>
 
+@if ($errors->any())
+    <div>
+        <p>Le film n'a pas pu être enregistré :</p>
+        <ul>
+            @foreach ($errors->all() as $error)
+                <li>{{ $error }}</li>
+            @endforeach
+        </ul>
+    </div>
+@endif
+
 <form action="{{ route('film.create') }}" method="POST">
     @csrf
     <label for="tmdb_id">ID TMDB :</label>
@@ -32,8 +43,8 @@
     <label for="derniere_synchronisation">Dernière synchronisation :</label>
     <input type="datetime-local" name="derniere_synchronisation" id="derniere_synchronisation" value="{{ old('derniere_synchronisation') }}">
 
-    <label for="realisateur_id">ID du réalisateur :</label>
-    <input type="text" name="realisateur_id" id="realisateur_id" value="{{ old('realisateur_id') }}">
+    <label for="realisateur">Réalisateur :</label>
+    <input type="text" name="realisateur" id="realisateur" value="{{ old('realisateur') }}">
 
     <button type="submit">Créer le film</button>
 </form>

@@ -11,6 +11,8 @@ class Film extends Model
 
     protected $table = 'film';
 
+    public $timestamps = false;
+
     protected $fillable = [
         'tmdb_id',
         'titre',
@@ -23,6 +25,8 @@ class Film extends Model
         'statut_sortie',
         'derniere_synchronisation',
         'realisateur_id',
+        'realisateur',
+        'est_sorti',
     ];
 
     protected function casts(): array
@@ -30,6 +34,7 @@ class Film extends Model
         return [
             'date_sortie' => 'date',
             'derniere_synchronisation' => 'datetime',
+            'est_sorti' => 'boolean',
         ];
     }
 }

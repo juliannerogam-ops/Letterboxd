@@ -2,8 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Services\TmdbService;
 use App\Models\Film;
+use Illuminate\Http\Client\RequestException;
 use Illuminate\Http\Request;
+use RuntimeException;
 
 class FilmController extends Controller
 {
@@ -19,6 +22,39 @@ class FilmController extends Controller
         $film = Film::findOrFail($id);
 
         return view('films.show', compact('film'));
+    }
+
+    public function importView()
+    {
+        return view('films.import');
+    }
+
+    public function importFromUrl(Request $request, TmdbService $tmdbService)
+    {
+        $validated = $request->validate([
+            'url' => ['required', 'url'],
+        ]);
+
+        if (! preg_match('~themoviedb\.org/movie/(\d+)~', $validated['url'], $matches)) {
+            return back()->withErrors(['url' => "Lien TMDb invalide. Utilise un lien de type https://www.themoviedb.org/movie/550."]);
+        }
+
+        $tmdbId = (int) $matches[1];
+        $film = Film::where('tmdb_id', $tmdbId)->first();
+
+        if (! $film) {
+            try {
+                $film = Film::create($tmdbService->getMovieDetails($tmdbId));
+            } catch (RequestException) {
+                return back()->withErrors(['url' => "Ce film n'a pas pu être récupéré depuis TMDb."]);
+            } catch (RuntimeException $exception) {
+                return back()->withErrors(['url' => $exception->getMessage()]);
+            }
+        }
+
+        return redirect()
+            ->route('film.show', ['id' => $film->id])
+            ->with('success', 'Film importé avec succès.');
     }
 
     public function delete($id)
@@ -42,6 +78,8 @@ class FilmController extends Controller
             'statut_sortie' => ['nullable', 'string', 'max:255'],
             'derniere_synchronisation' => ['nullable', 'date'],
             'realisateur_id' => ['nullable', 'uuid'],
+            'realisateur' => ['nullable', 'string', 'max:255'],
+            'est_sorti' => ['nullable', 'boolean'],
         ]));
 
         return redirect()->route('film.list');
@@ -69,6 +107,8 @@ class FilmController extends Controller
             'statut_sortie' => ['nullable', 'string', 'max:255'],
             'derniere_synchronisation' => ['nullable', 'date'],
             'realisateur_id' => ['nullable', 'uuid'],
+            'realisateur' => ['nullable', 'string', 'max:255'],
+            'est_sorti' => ['nullable', 'boolean'],
         ]));
 
         return redirect()->route('film.list');
