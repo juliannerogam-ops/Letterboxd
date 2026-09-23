@@ -2,8 +2,6 @@
 
 <form action="{{ route('film.edit', ['id' => $film->id]) }}" method="POST">
     @csrf
-    <label for="tmdb_id">ID TMDB :</label>
-    <input type="number" name="tmdb_id" id="tmdb_id" value="{{ old('tmdb_id', $film->tmdb_id) }}" required>
 
     <label for="titre">Titre :</label>
     <input type="text" name="titre" id="titre" value="{{ old('titre', $film->titre) }}" required>
