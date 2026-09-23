@@ -2,8 +2,7 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Models\Pokemon;
-use App\Http\Controllers\PokemonController;
+use App\Http\Controllers\FilmController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -38,22 +37,17 @@ Route::prefix('enseignant')->name("enseignant.")->group(function () {
     })->name("show");
 });
 
-Route::prefix('pokemon')->name("pokemon.")->group(function () {
-    // Afficher pokemons
-    Route::get('/', [PokemonController::class, 'list'])->name("list");
-    Route::get("/{id}", [PokemonController::class, 'show'])->where('id', '[0-9]+')->name("show");
-    Route::get("/only_bizzares", [PokemonController::class, 'onlyBizzares'])->name("only_bizzares");
+Route::prefix('film')->name("film.")->group(function () {
+    Route::get('/', [FilmController::class, 'list'])->name("list");
+    Route::get("/{id}", [FilmController::class, 'show'])->whereUuid('id')->name("show");
 
-    // Créer un pokemon
     Route::get('/create', function () {
-        return view('pokemons.create');
+        return view('films.create');
     })->name("view_create");
-    Route::post('/create', [PokemonController::class, 'create'])->name("create");
+    Route::post('/create', [FilmController::class, 'create'])->name("create");
 
-    // Modifier un pokemon
-    Route::get("/{id}/edit", [PokemonController::class, 'edit_view'])->name("edit_view");
-    Route::post("/{id}/edit", [PokemonController::class, 'edit'])->name("edit");
+    Route::get("/{id}/edit", [FilmController::class, 'edit_view'])->name("edit_view");
+    Route::post("/{id}/edit", [FilmController::class, 'edit'])->name("edit");
 
-    // Supprimer un pokemon
-    Route::get("/{id}/delete", [PokemonController::class, 'delete'])->name("delete");
+    Route::get("/{id}/delete", [FilmController::class, 'delete'])->name("delete");
 });
