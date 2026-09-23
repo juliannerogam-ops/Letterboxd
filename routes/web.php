@@ -3,39 +3,10 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\FilmController;
+use App\Http\Controllers\AuthController;
+use App\Http\Controllers\Controller;
+use App\Http\Requests\FilmRequest;
 
-Route::get('/', function () {
-    return view('welcome');
-});
-
-Route::get('/hello', function () {
-    return "Bonjour";
-});
-
-Route::get('/toto', function () {
-    return [
-        "Title" => "Dune",
-        "Description" => "Un film avec du sable"
-    ];
-});
-
-Route::get('/mmi', function (Request $request) {
-    return $request->ville;
-});
-
-Route::get('/blog/{id}', function ($id) {
-    return "Voici mon Article " . $id;
-})->name("blog.show");
-
-Route::prefix('enseignant')->name("enseignant.")->group(function () {
-    Route::get('/liste', function () {
-        return "Voici la liste des enseignants";
-    })->name("liste");
-
-    Route::get('/{id}', function ($id) {
-        return "Voici l'enseignant " . $id;
-    })->name("show");
-});
 
 Route::prefix('film')->name("film.")->group(function () {
     Route::get('/', [FilmController::class, 'list'])->name("list");
@@ -51,3 +22,19 @@ Route::prefix('film')->name("film.")->group(function () {
 
     Route::get("/{id}/delete", [FilmController::class, 'delete'])->name("delete");
 });
+
+Route::middleware('guest')->group(function () {
+    Route::get('/register', [AuthController::class, 'showRegister'])
+        ->name('register');
+
+    Route::post('/register', [AuthController::class, 'register']);
+
+    Route::get('/login', [AuthController::class, 'showLogin'])
+        ->name('login');
+
+    Route::post('/login', [AuthController::class, 'login']);
+});
+
+Route::post('/logout', [AuthController::class, 'logout'])
+    ->middleware('auth')
+    ->name('logout');
