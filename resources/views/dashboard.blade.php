@@ -1,5 +1,5 @@
 @include('components.navbar')
-@vite(['resources/css/calendar.css', 'resources/js/calendar.js'])
+@vite(['resources/css/dashboard.css', 'resources/css/calendar.css', 'resources/js/calendar.js'])
 
 <h1>Tableau de bord</h1>
 

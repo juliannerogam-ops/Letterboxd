@@ -1,74 +1,58 @@
-<nav class="bg-white border-b border-gray-100 shadow-sm">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="flex justify-between h-16">
-            
-            <!-- Logo et Liens Gauche -->
-            <div class="flex">
-                <!-- Logo -->
-                <div class="shrink-0 flex items-center">
-                    <a href="{{ route('profile') }}" class="font-bold text-xl text-indigo-600">
-                        Mon Profil
-                    </a>
-                </div>
+@vite('resources/css/navbar.css')
 
-                
+<nav class="sidebar-nav" aria-label="Navigation principale">
+    <a href="{{ route('dashboard') }}" class="sidebar-brand">
+        <span class="brand-mark" aria-hidden="true"></span>
+        <span>Your Letterboxd</span>
+    </a>
 
-                <!-- Liens de navigation principaux -->
-                <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex sm:items-center">
-                    <a href="{{ route('dashboard') }}" class="text-gray-900 hover:text-indigo-600 px-1 pt-1 text-sm font-medium">
-                        Tableau de bord
-                    </a>
-                </div>
-            </div>
-
-            <!-- Boutons d'authentification (Droite) -->
-            <div class="hidden sm:flex sm:items-center sm:ml-6">
-                @guest
-                    <!-- Mode Déconnecté -->
-                    <div class="space-x-4">
-                        @if (!request()->routeIs('login'))
-                            <a href="{{ route('login') }}" class="text-gray-500 hover:text-gray-700 text-sm font-medium">
-                                Connexion
-                            </a>
-                        @endif
-                            
-                        @if (!request()->routeIs('register'))
-                            <a href="{{ route('register') }}" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-md text-sm font-medium shadow-sm transition">
-                                S'inscrire
-                            </a>
-                        @endif
-
-                    </div>
-                @endguest
-
-                @auth
-                    <!-- Mode Connecté -->
-                    <div class="flex items-center space-x-4">
-                        <a href="{{ route('listes') }}" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-md text-sm font-medium shadow-sm transition">
-                            Mes listes
-                        </a>
-
-                        @if (Auth::user()->is_admin)
-                            <a href="{{ route('admin.index') }}" class="bg-gray-800 hover:bg-gray-900 text-white px-4 py-2 rounded-md text-sm font-medium shadow-sm transition">
-                                Admin
-                            </a>
-                        @endif
-
-                        <span class="text-gray-700 text-sm font-medium">
-                            Bonjour {{ Auth::user()->pseudo }}
-                        </span>
-                        
-                        <!-- Formulaire Logout intégré -->
-                        <form method="POST" action="{{ route('logout') }}" class="inline">
-                            @csrf
-                            <button type="submit" class="text-red-500 hover:text-red-700 text-sm font-medium">
-                                Déconnexion
-                            </button>
-                        </form>
-                    </div>
-                @endauth
-            </div>
-
+    @auth
+        <div class="sidebar-links">
+            <a href="{{ route('dashboard') }}" class="sidebar-link {{ request()->routeIs('dashboard') ? 'is-active' : '' }}">
+                <span class="sidebar-icon" aria-hidden="true">⌂</span>
+                Accueil
+            </a>
+            <a href="{{ route('recommendations.genre.create') }}" class="sidebar-link {{ request()->routeIs('recommendations.*') ? 'is-active' : '' }}">
+                <span class="sidebar-icon" aria-hidden="true">◉</span>
+                Découvrir
+            </a>
+            <a href="{{ route('listes') }}" class="sidebar-link {{ request()->routeIs('listes*') ? 'is-active' : '' }}">
+                <span class="sidebar-icon" aria-hidden="true">☷</span>
+                Mes listes
+            </a>
+            @if (Auth::user()->is_admin)
+                <a href="{{ route('admin.index') }}" class="sidebar-link {{ request()->routeIs('admin.*') ? 'is-active' : '' }}">
+                    <span class="sidebar-icon" aria-hidden="true">◎</span>
+                    Admin
+                </a>
+            @endif
+            <a href="{{ route('profile') }}" class="sidebar-link {{ request()->routeIs('profile*') ? 'is-active' : '' }}">
+                <span class="sidebar-icon" aria-hidden="true">♙</span>
+                Profil
+            </a>
         </div>
-    </div>
+
+        <div class="sidebar-account">
+            <div class="account-avatar" aria-hidden="true">{{ strtoupper(substr(Auth::user()->pseudo ?: Auth::user()->name, 0, 1)) }}</div>
+            <div class="account-copy">
+                <strong>Bonjour {{ Auth::user()->pseudo ?: Auth::user()->name }} !</strong>
+                <span>Prêt pour un nouveau film ?</span>
+            </div>
+            <form method="POST" action="{{ route('logout') }}">
+                @csrf
+                <button type="submit" class="sidebar-logout" aria-label="Déconnexion">↪</button>
+            </form>
+        </div>
+    @else
+        <div class="sidebar-links">
+            <a href="{{ route('login') }}" class="sidebar-link">
+                <span class="sidebar-icon" aria-hidden="true">→</span>
+                Connexion
+            </a>
+            <a href="{{ route('register') }}" class="sidebar-link">
+                <span class="sidebar-icon" aria-hidden="true">+</span>
+                S'inscrire
+            </a>
+        </div>
+    @endauth
 </nav>

@@ -1,0 +1,160 @@
+body:has(.sidebar-nav) {
+    min-height: 100vh;
+    padding-left: 264px;
+    background: #f4f7fb;
+    color: #182235;
+    font-family: 'Instrument Sans', 'Segoe UI', sans-serif;
+}
+
+.sidebar-nav {
+    box-sizing: border-box;
+    position: fixed;
+    inset: 0 auto 0 0;
+    z-index: 20;
+    display: flex;
+    width: 248px;
+    flex-direction: column;
+    padding: 28px 14px 18px;
+    background: #eef3f9;
+    border-right: 1px solid #dfe6ef;
+}
+
+.sidebar-brand {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 0 10px;
+    color: #182235;
+    font-family: 'Instrument Sans', 'Segoe UI', sans-serif;
+    font-size: 0.95rem;
+    font-weight: 700;
+    text-decoration: none;
+}
+
+.brand-mark {
+    width: 11px;
+    height: 11px;
+    border-radius: 50%;
+    background: #ef4fa9;
+}
+
+.sidebar-links {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+    margin-top: 32px;
+}
+
+.sidebar-link {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-height: 40px;
+    padding: 0 10px;
+    border-radius: 8px;
+    color: #40516a;
+    font-size: 0.85rem;
+    text-decoration: none;
+    transition: background-color 150ms ease, color 150ms ease;
+}
+
+.sidebar-link:hover,
+.sidebar-link.is-active {
+    background: #f9d9ed;
+    color: #ef3298;
+}
+
+.sidebar-icon {
+    display: inline-grid;
+    width: 18px;
+    place-items: center;
+    color: currentColor;
+    font-size: 1.05rem;
+    line-height: 1;
+}
+
+.sidebar-account {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: auto;
+    padding: 9px;
+    border: 1px solid #dfe6ef;
+    border-radius: 9px;
+    background: #fff;
+}
+
+.account-avatar {
+    display: grid;
+    width: 25px;
+    height: 25px;
+    flex: 0 0 25px;
+    place-items: center;
+    border-radius: 50%;
+    background: #eee9dc;
+    color: #85775d;
+    font-family: 'Instrument Sans', 'Segoe UI', sans-serif;
+    font-size: 0.7rem;
+    font-weight: 700;
+}
+
+.account-copy {
+    display: flex;
+    min-width: 0;
+    flex: 1;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.account-copy strong,
+.account-copy span {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.account-copy strong {
+    color: #182235;
+    font-size: 0.68rem;
+}
+
+.account-copy span {
+    color: #8793a4;
+    font-size: 0.58rem;
+}
+
+.sidebar-account form {
+    margin: 0;
+}
+
+.sidebar-logout {
+    border: 0;
+    background: transparent;
+    color: #8793a4;
+    cursor: pointer;
+    font-size: 1rem;
+}
+
+@media (max-width: 720px) {
+    body:has(.sidebar-nav) {
+        padding-left: 0;
+    }
+
+    .sidebar-nav {
+    box-sizing: border-box;
+        position: relative;
+        width: 100%;
+        min-height: auto;
+        padding: 16px;
+    }
+
+    .sidebar-links {
+        flex-direction: row;
+        flex-wrap: wrap;
+        margin-top: 18px;
+    }
+
+    .sidebar-account {
+        margin-top: 18px;
+    }
+}

@@ -1,0 +1,28 @@
+body:has(.release-calendar) {
+    font-family: 'Instrument Sans', 'Segoe UI', sans-serif;
+    line-height: 1.5;
+}
+
+body:has(.release-calendar) > h1 {
+    margin: 32px 0 24px;
+    color: #182235;
+    font-size: 2rem;
+    font-weight: 700;
+    line-height: 1.15;
+}
+
+body:has(.release-calendar) h2 {
+    margin: 28px 0 12px;
+    color: #182235;
+    font-size: 1.45rem;
+    font-weight: 700;
+    line-height: 1.2;
+}
+
+body:has(.release-calendar) h3 {
+    margin: 20px 0 8px;
+    color: #334155;
+    font-size: 1.1rem;
+    font-weight: 600;
+    line-height: 1.3;
+}
