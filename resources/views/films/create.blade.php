@@ -1,3 +1,5 @@
+@include('components.navbar')
+
 <h1>Créer un film</h1>
 
 @if ($errors->any())

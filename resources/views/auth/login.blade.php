@@ -1,3 +1,5 @@
+@include('components.navbar')
+
 <h1>Se connecter</h1>
 
 <form action="{{ route('login') }}" method="POST">
@@ -16,5 +18,11 @@
     <button type="submit">Se connecter</button>
 </form>
 
+<div class="mt-4 text-center">
+    <p>Vous n'avez pas de compte ?</p>
+    <a href="{{ route('register') }}" class="btn btn-secondary">
+        Créer un compte
+    </a>
+</div>
 
     
