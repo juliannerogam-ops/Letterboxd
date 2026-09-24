@@ -11,9 +11,13 @@ class AdminController extends Controller
 {
     public function index(): View
     {
-        return view('admin.index', [
+        return view('admin.index');
+    }
+
+    public function users(): View
+    {
+        return view('admin.users', [
             'users' => User::query()->orderBy('name')->get(),
-            'films' => Film::query()->orderBy('titre')->get(),
         ]);
     }
 
@@ -21,6 +25,6 @@ class AdminController extends Controller
     {
         $user->forceFill(['is_admin' => true])->save();
 
-        return redirect()->route('admin.index')->with('status', $user->pseudo . ' est maintenant administrateur.');
+        return redirect()->route('admin.users.index')->with('status', $user->pseudo . ' est maintenant administrateur.');
     }
 }

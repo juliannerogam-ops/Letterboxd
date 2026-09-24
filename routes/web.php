@@ -16,7 +16,9 @@ Route::get('/', function () {
 });
 
 Route::prefix('film')->name("film.")->group(function () {
-    Route::get('/', [FilmController::class, 'list'])->name("list");
+    Route::get('/', [FilmController::class, 'list'])
+        ->middleware(['auth', 'admin'])
+        ->name("list");
     Route::get('/import', [FilmController::class, 'importView'])->name("import_view");
     Route::post('/import', [FilmController::class, 'importFromUrl'])->name("import");
     Route::get("/{id}", [FilmController::class, 'show'])->whereUuid('id')->name("show");
@@ -50,6 +52,7 @@ Route::post('/logout', [AuthController::class, 'logout'])
 
 Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/', [AdminController::class, 'index'])->name('index');
+    Route::get('/users', [AdminController::class, 'users'])->name('users.index');
     Route::patch('/users/{user}/promote', [AdminController::class, 'promote'])->name('users.promote');
 });
 

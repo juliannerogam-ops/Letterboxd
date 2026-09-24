@@ -65,4 +65,25 @@ class RecommendationFeatureTest extends TestCase
                     && ! $recommendations->contains($otherFilm);
             });
     }
+
+    public function test_dashboard_contains_release_films_for_the_calendar(): void
+    {
+        $user = User::factory()->create();
+        $film = Film::create([
+            'tmdb_id' => 5,
+            'titre' => 'Film sorti aujourd’hui',
+            'genre' => 'Aventure',
+            'date_sortie' => '2026-09-24',
+        ]);
+
+        $this->actingAs($user)
+            ->withSession(['preferred_genre' => 'Aventure'])
+            ->get(route('dashboard'))
+            ->assertOk()
+            ->assertSee('release-calendar')
+            ->assertViewHas('releaseFilms', function ($releaseFilms) use ($film): bool {
+                return $releaseFilms->contains(fn (array $releaseFilm): bool => $releaseFilm['title'] === $film->titre
+                    && $releaseFilm['date'] === '2026-09-24');
+            });
+    }
 }

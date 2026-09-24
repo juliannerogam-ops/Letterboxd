@@ -2,7 +2,6 @@
 
 namespace Tests\Feature;
 
-use App\Models\Film;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -16,17 +15,25 @@ class AdminFeatureTest extends TestCase
         $admin = User::factory()->create();
         $admin->forceFill(['is_admin' => true])->save();
         $user = User::factory()->create();
-        $film = Film::create(['tmdb_id' => 201, 'titre' => 'Film administré']);
 
         $this->actingAs($user)
             ->get(route('admin.index'))
             ->assertForbidden();
 
+        $this->actingAs($user)
+            ->get(route('admin.users.index'))
+            ->assertForbidden();
+
         $this->actingAs($admin)
             ->get(route('admin.index'))
             ->assertOk()
-            ->assertSee($user->email)
-            ->assertSee($film->titre);
+            ->assertSee('Liste des utilisateurs')
+            ->assertSee('Liste des films');
+
+        $this->actingAs($admin)
+            ->get(route('admin.users.index'))
+            ->assertOk()
+            ->assertSee($user->email);
     }
 
     public function test_admin_can_promote_a_user(): void
@@ -37,7 +44,7 @@ class AdminFeatureTest extends TestCase
 
         $this->actingAs($admin)
             ->patch(route('admin.users.promote', $user))
-            ->assertRedirect(route('admin.index'));
+            ->assertRedirect(route('admin.users.index'));
 
         $this->assertDatabaseHas('users', [
             'id' => $user->id,

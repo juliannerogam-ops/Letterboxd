@@ -7,6 +7,7 @@ use Illuminate\Http\RedirectResponse; // 1. Ajoutez cet import en haut
 use App\Models\Liste;
 use App\Models\Film;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
 
 class DashboardController extends Controller
 {
@@ -42,11 +43,24 @@ class DashboardController extends Controller
             ->orderBy('titre')
             ->get();
 
+        $releaseFilms = Film::query()
+            ->whereNotNull('date_sortie')
+            ->orderBy('date_sortie')
+            ->orderBy('titre')
+            ->get(['id', 'titre', 'date_sortie'])
+            ->map(fn (Film $film): array => [
+                'date' => Carbon::parse($film->date_sortie)->toDateString(),
+                'title' => $film->titre,
+                'url' => route('film.show', ['id' => $film->id]),
+            ])
+            ->values();
+
         return view('dashboard', compact(
             'genre',
             'watchlistFilms',
             'recommendations',
-            'topFive'
+            'topFive',
+            'releaseFilms'
         ));
     }
 }
