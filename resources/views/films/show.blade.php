@@ -1,3 +1,5 @@
+@vite('resources/css/film.css')
+
 <a
 	href="{{ route('film.list') }}"
 	aria-label="Retour à la page précédente"
@@ -7,6 +9,16 @@
 </a>
 
 <h1>{{ $film->titre }}</h1>
+
+@if ($film->affiche_url)
+	<img
+		class="film-poster"
+		src="{{ $film->affiche_url }}"
+		alt="Affiche du film {{ $film->titre }}"
+		loading="lazy"
+	>
+@endif
+
 <h3>{{ $film->genre }}</h3>
 <p>{{ $film->description }}</p>
 <p>Sortie : {{ optional($film->date_sortie)->format('d/m/Y') }}</p>

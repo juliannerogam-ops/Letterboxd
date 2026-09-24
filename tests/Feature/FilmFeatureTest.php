@@ -42,4 +42,18 @@ class FilmFeatureTest extends TestCase
             ->get(route('film.list'))
             ->assertForbidden();
     }
+
+    public function test_film_page_displays_the_imported_poster(): void
+    {
+        $film = Film::create([
+            'tmdb_id' => 103,
+            'titre' => 'Film avec affiche',
+            'affiche_url' => 'https://image.tmdb.org/t/p/w500/poster.jpg',
+        ]);
+
+        $this->get(route('film.show', ['id' => $film->id]))
+            ->assertOk()
+            ->assertSee('https://image.tmdb.org/t/p/w500/poster.jpg')
+            ->assertSee('Affiche du film Film avec affiche');
+    }
 }

@@ -80,6 +80,10 @@ class TmdbService
         }
 
         $poster = $xpath->evaluate('string((//img[contains(@src, "/t/p/")])[1]/@src)');
+        if (str_starts_with($poster, '/')) {
+            $poster = 'https://image.tmdb.org' . $poster;
+        }
+
         $description = $this->text($xpath, '//div[contains(@class, "overview")]//p');
 
         return [

@@ -1,0 +1,9 @@
+.film-poster {
+    display: block;
+    width: min(100%, 320px);
+    max-height: 480px;
+    margin: 20px 0;
+    border-radius: 8px;
+    object-fit: cover;
+    box-shadow: 0 8px 24px rgba(24, 34, 53, 0.16);
+}
