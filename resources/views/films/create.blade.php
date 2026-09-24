@@ -12,7 +12,7 @@
 @endif
 
 <form action="{{ route('film.create') }}" method="POST">
-    @csrf
+    @csrfcd ..cd
 
     <label for="titre">Titre :</label>
     <input type="text" name="titre" id="titre" value="{{ old('titre') }}" required>

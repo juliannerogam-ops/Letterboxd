@@ -110,7 +110,6 @@ class FilmController extends Controller
             'realisateur' => ['nullable', 'string', 'max:255'],
             'est_sorti' => ['nullable', 'boolean'],
         ]));
-
         return redirect()->route('film.list');
     }
 }

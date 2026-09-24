@@ -3,6 +3,18 @@
 <form action="{{ route('film.edit', ['id' => $film->id]) }}" method="POST">
     @csrf
 
+    @if ($errors->any())
+        <div role="alert">
+            <ul>
+                @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
+
+    <input type="hidden" name="tmdb_id" value="{{ old('tmdb_id', $film->tmdb_id) }}">
+
     <label for="titre">Titre :</label>
     <input type="text" name="titre" id="titre" value="{{ old('titre', $film->titre) }}" required>
 
@@ -29,9 +41,6 @@
 
     <label for="derniere_synchronisation">Dernière synchronisation :</label>
     <input type="datetime-local" name="derniere_synchronisation" id="derniere_synchronisation" value="{{ old('derniere_synchronisation', optional($film->derniere_synchronisation)->format('Y-m-d\TH:i')) }}">
-
-    <label for="realisateur_id">ID du réalisateur :</label>
-    <input type="text" name="realisateur_id" id="realisateur_id" value="{{ old('realisateur_id', $film->realisateur_id) }}">
 
     <button type="submit">Mettre à jour le film</button>
 </form>
