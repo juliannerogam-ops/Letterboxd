@@ -8,8 +8,9 @@
 
 	<section class="film-detail-hero">
 		<div class="film-detail-poster-wrap">
-			@if ($film->affiche_url)
-				<img class="film-poster" src="{{ $film->affiche_url }}" alt="Affiche du film {{ $film->titre }}" loading="lazy">
+			@if ($film->hasVerifiedPoster())
+				<img class="film-poster" src="{{ $film->affiche_url }}" alt="Affiche du film {{ $film->titre }}" loading="lazy" onerror="this.classList.add('is-broken'); this.nextElementSibling.classList.add('is-visible')">
+				<div class="film-poster film-poster--placeholder poster-fallback" aria-label="Affiche indisponible"></div>
 			@else
 				<div class="film-poster film-poster--placeholder" aria-label="Affiche indisponible"></div>
 			@endif

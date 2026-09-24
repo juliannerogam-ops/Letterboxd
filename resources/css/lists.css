@@ -207,7 +207,9 @@ body:has(.list-page) .sidebar-nav {
     max-height: 220px;
     border-radius: 14px;
     object-fit: cover;
-    background: linear-gradient(135deg, #e1e8ef, #cbd6e0);
+    background:
+        radial-gradient(circle at 18% 22%, rgba(255, 255, 255, 0.55) 0 12%, transparent 42%),
+        linear-gradient(145deg, #f6b6c8 0%, #d8c1f1 48%, #9ed9d1 100%);
     box-shadow: 0 12px 20px rgba(25, 38, 56, 0.08);
 }
 
@@ -310,7 +312,7 @@ body:has(.list-page) .sidebar-nav {
     height: 68px;
     flex: 0 0 54px;
     border-radius: 8px;
-    background: linear-gradient(135deg, #e1e8ef, #cbd6e0);
+    background: linear-gradient(145deg, #a8d8f0 0%, #d9c4f2 48%, #f5c48d 100%);
     object-fit: cover;
 }
 

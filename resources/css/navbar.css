@@ -26,7 +26,7 @@ body:has(.sidebar-nav) {
     padding: 0 10px;
     color: #182235;
     font-family: 'Instrument Sans', 'Segoe UI', sans-serif;
-    font-size: 0.95rem;
+    font-size: 1.05rem;
     font-weight: 700;
     text-decoration: none;
 }
@@ -48,7 +48,7 @@ body:has(.sidebar-nav) {
 .sidebar-section-label {
     padding: 0 10px 4px;
     color: #9aa5b4;
-    font-size: 0.64rem;
+    font-size: 0.7rem;
     font-weight: 800;
     letter-spacing: 0.1em;
     text-transform: uppercase;
@@ -66,7 +66,7 @@ body:has(.sidebar-nav) {
     padding: 0 10px;
     border-radius: 8px;
     color: #40516a;
-    font-size: 0.85rem;
+    font-size: 0.98rem;
     text-decoration: none;
     transition: background-color 150ms ease, color 150ms ease;
 }

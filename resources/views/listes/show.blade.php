@@ -68,8 +68,9 @@
                 @foreach ($liste->films->sortBy(fn ($film) => $film->pivot->position ?? 99) as $film)
                     <a class="list-film-card" href="{{ route('film.show', ['id' => $film->id]) }}">
                         <div class="list-film-rank">#{{ $film->pivot->position ?? $loop->iteration }}</div>
-                        @if ($film->affiche_url)
-                            <img src="{{ $film->affiche_url }}" alt="Affiche de {{ $film->titre }}">
+                        @if ($film->hasVerifiedPoster())
+                            <img src="{{ $film->affiche_url }}" alt="Affiche de {{ $film->titre }}" onerror="this.classList.add('is-broken'); this.nextElementSibling.classList.add('is-visible')">
+                            <div class="list-film-placeholder poster-fallback" aria-hidden="true"></div>
                         @else
                             <div class="list-film-placeholder" aria-hidden="true"></div>
                         @endif
@@ -101,8 +102,9 @@
             <div class="list-discover-grid">
                 @foreach ($discoverFilms as $film)
                     <a class="list-discover-card" href="{{ route('film.show', ['id' => $film->id]) }}">
-                        @if ($film->affiche_url)
-                            <img src="{{ $film->affiche_url }}" alt="Affiche de {{ $film->titre }}">
+                        @if ($film->hasVerifiedPoster())
+                            <img src="{{ $film->affiche_url }}" alt="Affiche de {{ $film->titre }}" onerror="this.classList.add('is-broken'); this.nextElementSibling.classList.add('is-visible')">
+                            <span class="list-discover-placeholder poster-fallback" aria-hidden="true"></span>
                         @else
                             <span class="list-discover-placeholder" aria-hidden="true"></span>
                         @endif
@@ -116,4 +118,3 @@
         @endif
     </section>
 </main>
-

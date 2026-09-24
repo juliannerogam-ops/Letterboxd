@@ -74,6 +74,31 @@ class RecommendationFeatureTest extends TestCase
             ->assertSee('18/08/2006');
     }
 
+    public function test_recommendation_results_do_not_repeat_titles_with_formatting_variations(): void
+    {
+        $user = User::factory()->create();
+
+        Film::create([
+            'tmdb_id' => 81,
+            'titre' => 'Le Roi Lion',
+            'genre' => 'Animation',
+        ]);
+
+        Film::create([
+            'tmdb_id' => 82,
+            'titre' => 'Le roi-lion',
+            'genre' => 'Animation',
+        ]);
+
+        $this->actingAs($user)
+            ->get(route('recommendations.index'))
+            ->assertOk()
+            ->assertViewHas('films', fn ($films): bool => $films->whereIn('titre', [
+                'Le Roi Lion',
+                'Le roi-lion',
+            ])->count() === 1);
+    }
+
     public function test_recommendations_find_a_genre_inside_a_film_genre_list(): void
     {
         $user = User::factory()->create();

@@ -34,8 +34,9 @@
     <section class="recommendation-results-grid" aria-label="Films recommandés">
         @forelse ($films as $film)
             <article class="result-film-card">
-                @if ($film->affiche_url)
-                    <img src="{{ $film->affiche_url }}" alt="Affiche de {{ $film->titre }}">
+                @if ($film->hasVerifiedPoster())
+                    <img src="{{ $film->affiche_url }}" alt="Affiche de {{ $film->titre }}" onerror="this.classList.add('is-broken'); this.nextElementSibling.classList.add('is-visible')">
+                    <div class="result-film-poster-placeholder poster-fallback" aria-label="Affiche indisponible"></div>
                 @else
                     <div class="result-film-poster-placeholder" aria-label="Affiche indisponible"></div>
                 @endif

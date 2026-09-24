@@ -44,8 +44,9 @@
 
             @forelse ($featuredFilms as $film)
                 <article class="film-card">
-                    @if ($film->affiche_url)
-                        <img class="film-poster" src="{{ $film->affiche_url }}" alt="Affiche de {{ $film->titre }}">
+                    @if ($film->hasVerifiedPoster())
+                        <img class="film-poster" src="{{ $film->affiche_url }}" alt="Affiche de {{ $film->titre }}" onerror="this.classList.add('is-broken'); this.nextElementSibling.classList.add('is-visible')">
+                        <div class="film-poster poster-placeholder poster-fallback" aria-label="Affiche indisponible"></div>
                     @else
                         <div class="film-poster poster-placeholder" aria-hidden="true"></div>
                     @endif
@@ -83,8 +84,9 @@
                 <div class="watchlist-film-row">
                     @foreach ($watchlistFilms as $film)
                         <a class="watchlist-film-card" href="{{ route('film.show', ['id' => $film->id]) }}">
-                            @if ($film->affiche_url)
-                                <img src="{{ $film->affiche_url }}" alt="Affiche de {{ $film->titre }}">
+                            @if ($film->hasVerifiedPoster())
+                                <img src="{{ $film->affiche_url }}" alt="Affiche de {{ $film->titre }}" onerror="this.classList.add('is-broken'); this.nextElementSibling.classList.add('is-visible')">
+                                <span class="watchlist-film-placeholder poster-fallback" aria-hidden="true"></span>
                             @else
                                 <span class="watchlist-film-placeholder" aria-hidden="true"></span>
                             @endif
@@ -113,8 +115,9 @@
             <div class="recommendation-grid">
                 @foreach ($suggestedFilms as $film)
                     <a class="recommendation-card" href="{{ route('film.show', ['id' => $film->id]) }}">
-                        @if ($film->affiche_url)
-                            <img src="{{ $film->affiche_url }}" alt="Affiche de {{ $film->titre }}">
+                        @if ($film->hasVerifiedPoster())
+                            <img src="{{ $film->affiche_url }}" alt="Affiche de {{ $film->titre }}" onerror="this.classList.add('is-broken'); this.nextElementSibling.classList.add('is-visible')">
+                            <span class="recommendation-card-placeholder poster-fallback" aria-hidden="true"></span>
                         @else
                             <span class="recommendation-card-placeholder" aria-hidden="true"></span>
                         @endif

@@ -6,6 +6,7 @@ use App\Models\Film;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 
 class RecommendationController extends Controller
@@ -34,7 +35,9 @@ class RecommendationController extends Controller
             ->orderBy($showAllFilms ? 'titre' : 'avis_count', $showAllFilms ? 'asc' : 'desc')
             ->orderBy('titre')
             ->when(! $showAllFilms, fn ($query) => $query->limit(13))
-            ->get();
+            ->get()
+            ->unique(fn (Film $film): string => $this->normalizeTitle($film->titre))
+            ->values();
 
         return view('recommendations.index', [
             'films' => $films,
@@ -168,5 +171,14 @@ class RecommendationController extends Controller
             'Neutre' => ['The Grand Budapest Hotel', "Ocean's Eleven", 'The Martian', 'Catch Me If You Can', 'The Truman Show', 'Knives Out', 'Moneyball', 'The Secret Life of Walter Mitty', 'Now You See Me', 'The Intern'],
             'Ne sais pas trop' => ['Everything Everywhere All at Once', 'Eternal Sunshine of the Spotless Mind', 'Inception', 'The Truman Show', 'Spider-Man: Into the Spider-Verse', 'Her', 'The Grand Budapest Hotel', 'The Secret Life of Walter Mitty', 'Arrival', 'Lost in Translation'],
         ];
+    }
+
+    private function normalizeTitle(string $title): string
+    {
+        return (string) Str::of($title)
+            ->ascii()
+            ->lower()
+            ->replaceMatches('/[^a-z0-9]+/', ' ')
+            ->squish();
     }
 }

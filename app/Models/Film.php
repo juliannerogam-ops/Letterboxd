@@ -43,6 +43,26 @@ class Film extends Model
         ];
     }
 
+    public function hasVerifiedPoster(): bool
+    {
+        $poster = $this->affiche_url;
+
+        if (! is_string($poster) || $poster === '') {
+            return false;
+        }
+
+        $url = parse_url($poster);
+
+        if (($url['scheme'] ?? null) === 'https') {
+            return in_array($url['host'] ?? null, ['image.tmdb.org', 'media.themoviedb.org'], true)
+                && str_starts_with($url['path'] ?? '', '/t/p/');
+        }
+
+        return ($url['path'] ?? '') !== ''
+            && str_starts_with($url['path'], '/images/')
+            && preg_match('/\.(?:png|jpe?g|webp)$/i', $url['path']) === 1;
+    }
+
     public function listes(): BelongsToMany
     {
         return $this->belongsToMany(Liste::class, 'film_liste');

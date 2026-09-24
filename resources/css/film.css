@@ -54,6 +54,18 @@ body:has(.film-detail-page) {
     min-height: 430px;
 }
 
+.poster-fallback {
+    display: none !important;
+}
+
+.poster-fallback.is-visible {
+    display: block !important;
+}
+
+img.is-broken {
+    display: none !important;
+}
+
 .film-detail-copy {
     padding-top: 16px;
 }
