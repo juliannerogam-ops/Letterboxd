@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use App\Models\Liste;
 use App\Models\User;
 
 class AuthController extends Controller
@@ -24,6 +25,7 @@ class AuthController extends Controller
         ]);
 
         $user = User::create($validated);
+        Liste::createDefaultsFor($user);
         Auth::login($user);
 
         return redirect()->route('film.list');

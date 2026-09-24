@@ -19,6 +19,16 @@
         @endforeach
     </select>
 
+    @if ($liste->isTopFive())
+        <label for="position">Rang :</label>
+        <select id="position" name="position" required>
+            <option value="">Choisir un rang</option>
+            @for ($position = 1; $position <= 5; $position++)
+                <option value="{{ $position }}">{{ $position }}</option>
+            @endfor
+        </select>
+    @endif
+
     <button type="submit">Ajouter à la liste</button>
 </form>
 
@@ -30,6 +40,9 @@
     <ul>
         @foreach ($liste->films as $film)
             <li>
+                @if ($liste->isTopFive())
+                    #{{ $film->pivot->position }}
+                @endif
                 <a href="{{ route('film.show', ['id' => $film->id]) }}">{{ $film->titre }}</a>
             </li>
         @endforeach

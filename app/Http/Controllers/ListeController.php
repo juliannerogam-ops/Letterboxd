@@ -7,6 +7,7 @@ use App\Models\Liste;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\DB;
 
 class ListeController extends Controller
 {
@@ -63,9 +64,30 @@ class ListeController extends Controller
 
         $validated = $request->validate([
             'film_id' => ['required', 'uuid', 'exists:film,id'],
+            'position' => [$liste->isTopFive() ? 'required' : 'nullable', 'integer', 'between:1,5'],
         ]);
 
-        $liste->films()->syncWithoutDetaching([$validated['film_id']]);
+        if ($liste->isTopFive()) {
+            DB::transaction(function () use ($liste, $validated): void {
+                $liste->films()->detach($validated['film_id']);
+
+                DB::table('film_liste')
+                    ->where('liste_id', $liste->id)
+                    ->where('position', '>=', $validated['position'])
+                    ->increment('position');
+
+                DB::table('film_liste')
+                    ->where('liste_id', $liste->id)
+                    ->where('position', '>', 5)
+                    ->delete();
+
+                $liste->films()->attach($validated['film_id'], [
+                    'position' => $validated['position'],
+                ]);
+            });
+        } else {
+            $liste->films()->syncWithoutDetaching([$validated['film_id']]);
+        }
 
         return redirect()->route('listes.show', $liste);
     }
