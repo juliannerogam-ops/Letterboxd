@@ -1,3 +1,5 @@
+@include('components.navbar')
+
 <h1>S'inscrire</h1>
 
 <form action="{{ route('register') }}" method="POST">

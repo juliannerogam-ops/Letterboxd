@@ -29,12 +29,18 @@
                 @guest
                     <!-- Mode Déconnecté -->
                     <div class="space-x-4">
-                        <a href="{{ route('login') }}" class="text-gray-500 hover:text-gray-700 text-sm font-medium">
-                            Connexion
-                        </a>
-                        <a href="{{ route('register') }}" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-md text-sm font-medium shadow-sm transition">
-                            S'inscrire
-                        </a>
+                        @if (!request()->routeIs('login'))
+                            <a href="{{ route('login') }}" class="text-gray-500 hover:text-gray-700 text-sm font-medium">
+                                Connexion
+                            </a>
+                        @endif
+                            
+                        @if (!request()->routeIs('register'))
+                            <a href="{{ route('register') }}" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-md text-sm font-medium shadow-sm transition">
+                                S'inscrire
+                            </a>
+                        @endif
+                                
                     </div>
                 @endguest
 
