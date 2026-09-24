@@ -25,6 +25,25 @@ class ListeFeatureTest extends TestCase
         );
     }
 
+    public function test_dashboard_still_loads_with_default_genre_when_none_is_selected(): void
+    {
+        $user = User::factory()->create();
+
+        foreach (range(1, 7) as $index) {
+            Film::create([
+                'tmdb_id' => 2000 + $index,
+                'titre' => 'Film default ' . $index,
+                'genre' => 'Action',
+            ]);
+        }
+
+        $this->actingAs($user)
+            ->get(route('dashboard'))
+            ->assertOk();
+
+        $this->assertSame('Action', session('preferred_genre') ?? 'Action');
+    }
+
     public function test_dashboard_creates_a_top_five_when_missing(): void
     {
         $user = User::factory()->create();

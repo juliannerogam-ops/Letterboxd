@@ -14,11 +14,10 @@ class DashboardController extends Controller
     // 2. Modifiez le type de retour ici pour autoriser View OU RedirectResponse
     public function index(Request $request): View|RedirectResponse
     {
-        $genre = $request->session()->get('preferred_genre');
+        $genre = $request->session()->get('preferred_genre', 'Action');
 
-        if (! $genre) {
-            // Cette ligne fonctionne maintenant sans provoquer de TypeError !
-            return redirect()->route('recommendations.genre.create');
+        if (! $request->session()->has('preferred_genre')) {
+            $request->session()->put('preferred_genre', $genre);
         }
 
         $watchlist = $request->user()

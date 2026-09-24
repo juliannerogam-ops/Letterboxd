@@ -4,6 +4,9 @@ if (releaseFilmsData) {
     const releaseFilms = JSON.parse(releaseFilmsData.textContent);
     const calendarDays = document.getElementById('calendar-days');
     const calendarTitle = document.getElementById('release-calendar-title');
+    const monthSelect = document.getElementById('release-month-select');
+    const prevMonthBtn = document.querySelector('.month-nav-prev');
+    const nextMonthBtn = document.querySelector('.month-nav-next');
     const selectedFilms = document.getElementById('selected-release-films');
     const calendar = document.querySelector('.release-calendar');
     const csrfToken = calendar.dataset.csrfToken;
@@ -81,6 +84,10 @@ if (releaseFilmsData) {
         const firstDay = (new Date(year, month, 1).getDay() + 6) % 7;
         const daysInMonth = new Date(year, month + 1, 0).getDate();
 
+        if (monthSelect) {
+            monthSelect.value = String(month);
+        }
+
         calendarTitle.textContent = new Intl.DateTimeFormat('fr-FR', {
             month: 'long',
             year: 'numeric',
@@ -97,7 +104,8 @@ if (releaseFilmsData) {
             const button = document.createElement('button');
             button.type = 'button';
             const releaseColor = films.length ? ` release-color-${day % 5}` : '';
-            button.className = `calendar-day${films.length ? ' has-releases' : ''}${releaseColor}${selectedDate === date ? ' is-selected' : ''}`;
+            const isWeekend = [0, 6].includes(new Date(year, month, day).getDay());
+            button.className = `calendar-day${films.length ? ' has-releases' : ''}${releaseColor}${selectedDate === date ? ' is-selected' : ''}${isWeekend ? ' is-weekend' : ''}`;
             button.textContent = day;
 
             if (films.length) {
@@ -112,15 +120,26 @@ if (releaseFilmsData) {
         }
     }
 
-    document.getElementById('previous-month').addEventListener('click', () => {
-        displayedMonth.setMonth(displayedMonth.getMonth() - 1);
-        renderCalendar();
-    });
+    if (monthSelect) {
+        monthSelect.addEventListener('change', (event) => {
+            displayedMonth = new Date(displayedMonth.getFullYear(), Number(event.target.value), 1);
+            renderCalendar();
+        });
+    }
 
-    document.getElementById('next-month').addEventListener('click', () => {
-        displayedMonth.setMonth(displayedMonth.getMonth() + 1);
-        renderCalendar();
-    });
+    if (prevMonthBtn) {
+        prevMonthBtn.addEventListener('click', () => {
+            displayedMonth = new Date(displayedMonth.getFullYear(), displayedMonth.getMonth() - 1, 1);
+            renderCalendar();
+        });
+    }
+
+    if (nextMonthBtn) {
+        nextMonthBtn.addEventListener('click', () => {
+            displayedMonth = new Date(displayedMonth.getFullYear(), displayedMonth.getMonth() + 1, 1);
+            renderCalendar();
+        });
+    }
 
     renderCalendar();
 }

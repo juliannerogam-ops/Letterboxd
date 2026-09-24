@@ -18,16 +18,6 @@
         </button>
     </header>
 
-    <section class="mood-hero">
-        <div class="hero-sheen" aria-hidden="true"></div>
-        <div class="hero-content">
-            <span class="hero-label">NOUVEAU</span>
-            <h1>Quel est ton mood <br>d'aujourd'hui ?</h1>
-            <p>Fais notre test et découvre des films qui te correspondent vraiment.</p>
-            <a href="{{ route('recommendations.genre.create') }}" class="hero-button">Lancer le test</a>
-        </div>
-    </section>
-
     <section class="movie-picker">
         <div class="section-title-row">
             <h2>Envie de regarder un film ?</h2>
@@ -61,57 +51,113 @@
         </div>
     </section>
 
-    <section class="base-dashboard-panel">
-        <div class="legacy-block">
-            <h3>Recommandations</h3>
-            <p class="muted-copy">Suggestions pour le genre : {{ $genre }}</p>
+    <section class="legacy-block recommendation-block">
+        <h3>Recommandations</h3>
+        <p class="muted-copy">Suggestions pour le genre : {{ $genre }}</p>
 
-            <div class="nested-section">
-                <h4>Films de votre watchlist</h4>
-                @if ($watchlistFilms->isEmpty())
-                    <p>Aucun film de votre watchlist ne correspond à ce genre.</p>
-                @else
-                    <ul>
-                        @foreach ($watchlistFilms as $film)
-                            <li>
-                                <a href="{{ route('film.show', ['id' => $film->id]) }}">{{ $film->titre }}</a>
-                            </li>
-                        @endforeach
-                    </ul>
-                @endif
-            </div>
-
-            <div class="nested-section">
-                <h4>On pense que ça pourrait vous plaire aussi</h4>
-                @if ($recommendations->isEmpty())
-                    <p>Aucune autre recommandation disponible.</p>
-                @else
-                    <ul>
-                        @foreach ($recommendations as $film)
-                            <li>
-                                <a href="{{ route('film.show', ['id' => $film->id]) }}">{{ $film->titre }}</a>
-                            </li>
-                        @endforeach
-                    </ul>
-                @endif
-            </div>
+        <div class="nested-section">
+            <h4>Films de votre watchlist</h4>
+            @if ($watchlistFilms->isEmpty())
+                <p>Aucun film de votre watchlist ne correspond à ce genre.</p>
+            @else
+                <ul>
+                    @foreach ($watchlistFilms as $film)
+                        <li>
+                            <a href="{{ route('film.show', ['id' => $film->id]) }}">{{ $film->titre }}</a>
+                        </li>
+                    @endforeach
+                </ul>
+            @endif
         </div>
 
-        <div class="legacy-block top-five-block">
-            <h3>Mon Top 5</h3>
-            @if ($topFive && $topFive->films->isNotEmpty())
-                <ol>
-                    @foreach ($topFive->films as $film)
-                        <li><a href="{{ route('film.show', ['id' => $film->id]) }}">{{ $film->titre }}</a></li>
-                    @endforeach
-                </ol>
+        <div class="nested-section">
+            <h4>On pense que ça pourrait vous plaire aussi</h4>
+            @if ($recommendations->isEmpty())
+                <p>Aucune autre recommandation disponible.</p>
             @else
-                <p>Ton Top 5 est encore vide.</p>
+                <ul>
+                    @foreach ($recommendations as $film)
+                        <li>
+                            <a href="{{ route('film.show', ['id' => $film->id]) }}">{{ $film->titre }}</a>
+                        </li>
+                    @endforeach
+                </ul>
             @endif
+        </div>
+    </section>
 
-            @if ($topFive)
-                <a href="{{ route('listes.show', $topFive) }}" class="inline-link">Modifier mon Top 5</a>
-            @endif
+    <section class="activity-grid-shell">
+        <div class="activity-panel">
+            <div class="panel-header-row">
+                <h3>Votre activité</h3>
+                <label class="month-select-wrap" aria-label="Choisir le mois">
+                    <span class="month-label">Mois</span>
+                    <select class="month-select" name="activity_month">
+                        <option value="janvier">Janvier</option>
+                        <option value="fevrier">Février</option>
+                        <option value="mars">Mars</option>
+                        <option value="avril">Avril</option>
+                        <option value="mai">Mai</option>
+                        <option value="juin">Juin</option>
+                        <option value="juillet">Juillet</option>
+                        <option value="aout">Août</option>
+                        <option value="septembre" selected>Septembre</option>
+                        <option value="octobre">Octobre</option>
+                        <option value="novembre">Novembre</option>
+                        <option value="decembre">Décembre</option>
+                    </select>
+                </label>
+            </div>
+
+            <div class="activity-calendar" aria-label="Journal de bord des moods">
+                <div class="journal-day-name">Lun</div>
+                <div class="journal-day-name">Mar</div>
+                <div class="journal-day-name">Mer</div>
+                <div class="journal-day-name">Jeu</div>
+                <div class="journal-day-name">Ven</div>
+                <div class="journal-day-name">Sam</div>
+                <div class="journal-day-name">Dim</div>
+
+                <button type="button" class="journal-day journal-day--muted"> </button>
+                <button type="button" class="journal-day mood-rose">1</button>
+                <button type="button" class="journal-day mood-sky">2</button>
+                <button type="button" class="journal-day mood-amber">3</button>
+                <button type="button" class="journal-day mood-mint">4</button>
+                <button type="button" class="journal-day mood-lavender">5</button>
+                <button type="button" class="journal-day mood-gray">6</button>
+
+                <button type="button" class="journal-day mood-sky">7</button>
+                <button type="button" class="journal-day mood-rose">8</button>
+                <button type="button" class="journal-day mood-gray">9</button>
+                <button type="button" class="journal-day mood-amber">10</button>
+                <button type="button" class="journal-day mood-mint">11</button>
+                <button type="button" class="journal-day mood-gray">12</button>
+                <button type="button" class="journal-day mood-lavender">13</button>
+
+                <button type="button" class="journal-day mood-sky">14</button>
+                <button type="button" class="journal-day mood-rose">15</button>
+                <button type="button" class="journal-day mood-mint">16</button>
+                <button type="button" class="journal-day mood-amber">17</button>
+                <button type="button" class="journal-day mood-gray">18</button>
+                <button type="button" class="journal-day mood-rose">19</button>
+                <button type="button" class="journal-day mood-sky">20</button>
+
+                <button type="button" class="journal-day mood-amber">21</button>
+                <button type="button" class="journal-day mood-gray">22</button>
+                <button type="button" class="journal-day mood-sky">23</button>
+                <button type="button" class="journal-day mood-mint">24</button>
+                <button type="button" class="journal-day mood-rose">25</button>
+                <button type="button" class="journal-day mood-amber">26</button>
+                <button type="button" class="journal-day mood-gray">27</button>
+
+                <button type="button" class="journal-day mood-sky">28</button>
+                <button type="button" class="journal-day mood-mint">29</button>
+                <button type="button" class="journal-day mood-rose">30</button>
+                <button type="button" class="journal-day mood-pink"> </button>
+                <button type="button" class="journal-day journal-day--muted"> </button>
+                <button type="button" class="journal-day journal-day--muted"> </button>
+                <button type="button" class="journal-day journal-day--muted"> </button>
+            </div>
         </div>
 
         <div class="legacy-block release-box">
@@ -124,9 +170,28 @@
 
             <section class="release-calendar" aria-labelledby="release-calendar-title" data-csrf-token="{{ csrf_token() }}">
                 <div class="release-calendar-header">
-                    <button type="button" id="previous-month" aria-label="Mois précédent">&larr;</button>
-                    <h2 id="release-calendar-title"></h2>
-                    <button type="button" id="next-month" aria-label="Mois suivant">&rarr;</button>
+                    <h2 id="release-calendar-title" class="release-calendar-title"></h2>
+
+                    <div class="release-month-picker" aria-label="Choisir le mois">
+                        <button type="button" class="month-nav month-nav-prev" data-direction="prev" aria-label="Mois précédent">‹</button>
+                        <label class="release-month-select-wrap">
+                            <select id="release-month-select" class="release-month-select" aria-label="Sélectionner le mois">
+                                <option value="0">Janvier</option>
+                                <option value="1">Février</option>
+                                <option value="2">Mars</option>
+                                <option value="3">Avril</option>
+                                <option value="4">Mai</option>
+                                <option value="5">Juin</option>
+                                <option value="6">Juillet</option>
+                                <option value="7">Août</option>
+                                <option value="8" selected>Septembre</option>
+                                <option value="9">Octobre</option>
+                                <option value="10">Novembre</option>
+                                <option value="11">Décembre</option>
+                            </select>
+                        </label>
+                        <button type="button" class="month-nav month-nav-next" data-direction="next" aria-label="Mois suivant">›</button>
+                    </div>
                 </div>
 
                 <div class="calendar-weekdays" aria-hidden="true">
