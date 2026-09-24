@@ -96,7 +96,8 @@ if (releaseFilmsData) {
             const films = filmsByDate[date] ?? [];
             const button = document.createElement('button');
             button.type = 'button';
-            button.className = `calendar-day${films.length ? ' has-releases' : ''}${selectedDate === date ? ' is-selected' : ''}`;
+            const releaseColor = films.length ? ` release-color-${day % 5}` : '';
+            button.className = `calendar-day${films.length ? ' has-releases' : ''}${releaseColor}${selectedDate === date ? ' is-selected' : ''}`;
             button.textContent = day;
 
             if (films.length) {
