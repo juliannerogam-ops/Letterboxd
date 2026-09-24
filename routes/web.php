@@ -9,6 +9,9 @@ use App\Http\Requests\FilmRequest;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ListeController;
 
+Route::get('/', function () {
+    return redirect()->route('login');
+});
 
 Route::prefix('film')->name("film.")->group(function () {
     Route::get('/', [FilmController::class, 'list'])->name("list");
