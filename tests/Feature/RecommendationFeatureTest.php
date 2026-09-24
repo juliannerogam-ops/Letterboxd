@@ -104,6 +104,33 @@ class RecommendationFeatureTest extends TestCase
             });
     }
 
+    public function test_happy_mood_loads_at_least_ten_compatible_recommendations(): void
+    {
+        $user = User::factory()->create();
+
+        foreach (range(1, 10) as $filmNumber) {
+            Film::create([
+                'tmdb_id' => 100 + $filmNumber,
+                'titre' => 'Film heureux '.$filmNumber,
+                'genre' => 'Aventure',
+            ]);
+        }
+
+        $this->actingAs($user)
+            ->post(route('recommendations.genre.store'), [
+                'genre' => 'Aventure',
+                'mood' => 'Heureuse',
+            ])
+            ->assertRedirect(route('dashboard'));
+
+        $this->actingAs($user)
+            ->get(route('dashboard'))
+            ->assertViewHas('recommendations', function ($recommendations): bool {
+                return $recommendations->count() >= 10
+                    && $recommendations->every(fn (Film $film): bool => str_contains($film->genre, 'Aventure'));
+            });
+    }
+
     public function test_dashboard_contains_release_films_for_the_calendar(): void
     {
         $user = User::factory()->create();

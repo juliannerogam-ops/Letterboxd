@@ -1,9 +1,236 @@
+body:has(.film-detail-page) {
+    min-height: 100vh;
+    margin: 0;
+    background: #fff;
+    color: #162237;
+    font-family: 'Instrument Sans', 'Segoe UI', sans-serif;
+}
+
+.film-detail-page {
+    width: min(1120px, calc(100vw - 80px));
+    margin: 0 auto;
+    padding: 32px 0 72px;
+}
+
+.film-back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 28px;
+    color: #65758b;
+    font-size: 0.82rem;
+    font-weight: 700;
+    text-decoration: none;
+}
+
+.film-back-link span {
+    font-size: 1.1rem;
+}
+
+.film-detail-hero {
+    display: grid;
+    grid-template-columns: minmax(240px, 0.8fr) minmax(0, 1.5fr);
+    gap: 48px;
+    align-items: start;
+    padding-bottom: 54px;
+    border-bottom: 1px solid rgba(25, 40, 61, 0.1);
+}
+
+.film-detail-poster-wrap {
+    max-width: 360px;
+}
+
 .film-poster {
     display: block;
-    width: min(100%, 320px);
-    max-height: 480px;
-    margin: 20px 0;
-    border-radius: 8px;
+    width: 100%;
+    aspect-ratio: 0.7;
+    border-radius: 16px;
     object-fit: cover;
-    box-shadow: 0 8px 24px rgba(24, 34, 53, 0.16);
+    background: linear-gradient(135deg, #dfe7ed, #c6d1db);
+    box-shadow: 0 18px 30px rgba(24, 34, 53, 0.14);
+}
+
+.film-poster--placeholder {
+    min-height: 430px;
+}
+
+.film-detail-copy {
+    padding-top: 16px;
+}
+
+.film-detail-kicker {
+    color: #e76c9e;
+    font-size: 0.72rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.film-detail-copy h1 {
+    max-width: 720px;
+    margin: 10px 0 14px;
+    color: #101b2d;
+    font-size: clamp(2.3rem, 5vw, 4.7rem);
+    font-weight: 800;
+    letter-spacing: -0.06em;
+    line-height: 0.98;
+}
+
+.film-detail-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.film-detail-tags span {
+    padding: 7px 11px;
+    border-radius: 999px;
+    background: #e7edf2;
+    color: #63748a;
+    font-size: 0.75rem;
+    font-weight: 700;
+}
+
+.film-detail-rating {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 28px 0;
+    color: #75859a;
+    font-size: 0.82rem;
+}
+
+.film-stars {
+    color: #efb31b;
+    font-size: 1rem;
+    letter-spacing: 0.08em;
+}
+
+.film-detail-rating strong {
+    color: #172236;
+    font-size: 1.05rem;
+}
+
+.film-facts {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 18px;
+    margin: 0 0 28px;
+    padding: 18px 0;
+    border-top: 1px solid rgba(25, 40, 61, 0.1);
+    border-bottom: 1px solid rgba(25, 40, 61, 0.1);
+}
+
+.film-facts dt {
+    margin-bottom: 6px;
+    color: #8795a7;
+    font-size: 0.68rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.film-facts dd {
+    margin: 0;
+    color: #172236;
+    font-size: 0.88rem;
+    font-weight: 700;
+}
+
+.film-list-form {
+    max-width: 560px;
+}
+
+.film-list-form label {
+    display: block;
+    margin-bottom: 8px;
+    color: #65758b;
+    font-size: 0.78rem;
+    font-weight: 700;
+}
+
+.film-list-form > div {
+    display: flex;
+    gap: 10px;
+}
+
+.film-list-form select,
+.film-list-form button {
+    height: 44px;
+    border-radius: 10px;
+    font: inherit;
+}
+
+.film-list-form select {
+    min-width: 0;
+    flex: 1;
+    padding: 0 12px;
+    border: 1px solid rgba(25, 40, 61, 0.14);
+    background: #fff;
+    color: #172236;
+}
+
+.film-list-form button {
+    padding: 0 18px;
+    border: 0;
+    background: #172236;
+    color: #fff;
+    font-size: 0.82rem;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.film-detail-section {
+    max-width: 760px;
+    padding-top: 42px;
+}
+
+.film-detail-section h2 {
+    margin: 8px 0 12px;
+    color: #172236;
+    font-size: 1.55rem;
+    letter-spacing: -0.04em;
+}
+
+.film-detail-section p {
+    margin: 0;
+    color: #63748a;
+    font-family: Georgia, 'Times New Roman', serif;
+    font-size: 1rem;
+    line-height: 1.7;
+}
+
+@media (max-width: 720px) {
+    .film-detail-page {
+        width: auto;
+        padding: 24px 16px 48px;
+    }
+
+    .film-detail-hero {
+        grid-template-columns: 1fr;
+        gap: 28px;
+    }
+
+    .film-detail-poster-wrap {
+        width: min(100%, 280px);
+    }
+
+    .film-detail-copy {
+        padding-top: 0;
+    }
+
+    .film-facts {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .film-list-form > div {
+        flex-direction: column;
+    }
+}
+
+.film-poster,
+.film-detail-tags span,
+.film-list-form select,
+.film-list-form button {
+    border-radius: 4px;
 }

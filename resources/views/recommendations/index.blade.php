@@ -40,11 +40,18 @@
                             <span>Non noté</span>
                         @endif
                     </span>
-                    <span class="result-film-reviews">({{ $film->avis_count }} avis)</span>
+                    @if ($film->avis_count > 0)
+                        <span class="result-film-reviews">({{ $film->avis_count }} avis)</span>
+                    @else
+                        <span class="result-film-reviews">Avis indisponibles</span>
+                    @endif
                 </div>
-                <time class="result-film-date" datetime="{{ $film->date_sortie?->toDateString() }}">
-                    {{ $film->date_sortie?->format('d/m/Y') ?? 'Date inconnue' }}
-                </time>
+                @if ($film->date_sortie)
+                    <time class="result-film-date" datetime="{{ $film->date_sortie->toDateString() }}">
+                        <span>Sortie</span>
+                        {{ $film->date_sortie->format('d/m/Y') }}
+                    </time>
+                @endif
             </article>
         @empty
             @for ($i = 0; $i < 8; $i++)

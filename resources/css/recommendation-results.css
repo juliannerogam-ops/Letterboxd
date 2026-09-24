@@ -9,13 +9,13 @@
 body:has(.recommendation-results) {
     min-height: 100vh;
     margin: 0;
-    background: var(--recommendation-page);
+    background: #fff;
     color: var(--recommendation-text);
     font-family: 'Instrument Sans', 'Segoe UI', sans-serif;
 }
 
 .recommendation-results {
-    width: min(1180px, calc(100vw - 130px));
+    width: min(1120px, calc(100vw - 80px));
     margin: 0 auto;
     padding: 28px 14px 52px;
 }
@@ -68,13 +68,14 @@ body:has(.recommendation-results) {
 
 .result-film-card {
     min-width: 0;
+    padding-bottom: 4px;
 }
 
 .result-film-card img,
 .result-film-poster-placeholder {
     display: block;
     width: 100%;
-    aspect-ratio: 1.48 / 1;
+    aspect-ratio: 0.68 / 1;
     margin-bottom: 8px;
     border-radius: 12px;
     object-fit: cover;
@@ -89,7 +90,7 @@ body:has(.recommendation-results) {
     overflow: hidden;
     margin: 0;
     color: #111a28;
-    font-size: 0.82rem;
+    font-size: 0.84rem;
     font-weight: 800;
     line-height: 1.2;
     text-overflow: ellipsis;
@@ -114,7 +115,8 @@ body:has(.recommendation-results) {
     display: flex;
     align-items: center;
     gap: 5px;
-    min-height: 16px;
+    min-height: 18px;
+    margin-top: 2px;
 }
 
 .result-film-rating {
@@ -136,8 +138,22 @@ body:has(.recommendation-results) {
 }
 
 .result-film-date {
-    display: block;
-    margin-top: 3px;
+    display: flex;
+    align-items: baseline;
+    justify-content: flex-end;
+    gap: 5px;
+    width: 100%;
+    margin-top: 5px;
+    color: #6f8095;
+    font-size: 0.69rem;
+    font-weight: 600;
+}
+
+.result-film-date span {
+    color: #9aa7b7;
+    font-size: 0.64rem;
+    font-weight: 700;
+    text-transform: uppercase;
 }
 
 @media (max-width: 720px) {
@@ -150,4 +166,10 @@ body:has(.recommendation-results) {
         grid-template-columns: repeat(2, minmax(0, 1fr));
         gap: 28px 12px;
     }
+}
+
+.recommendation-filter,
+.result-film-card img,
+.result-film-poster-placeholder {
+    border-radius: 4px;
 }

@@ -8,25 +8,27 @@
 
     @auth
         <div class="sidebar-links">
+            <span class="sidebar-section-label">Explorer</span>
             <a href="{{ route('dashboard') }}" class="sidebar-link {{ request()->routeIs('dashboard') ? 'is-active' : '' }}">
                 <span class="sidebar-icon" aria-hidden="true">
                     <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 10.5 12 4l8 6.5"/><path d="M6 9.8V19h12V9.8"/><path d="M10 19v-5h4v5"/></svg>
                 </span>
                 Accueil
             </a>
-            <a href="{{ route('recommendations.genre.create') }}" class="sidebar-link {{ request()->routeIs('recommendations.*') ? 'is-active' : '' }}">
+            <a href="{{ route('recommendations.index') }}" class="sidebar-link {{ request()->routeIs('recommendations.index') ? 'is-active' : '' }}">
                 <span class="sidebar-icon" aria-hidden="true">
                     <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="6.5"/><circle cx="12" cy="12" r="2.2"/><path d="M12 1.8v2.7M12 19.5v2.7M1.8 12h2.7M19.5 12h2.7"/></svg>
                 </span>
                 Découvrir
             </a>
+            <span class="sidebar-section-label sidebar-section-label--collection">Ta collection</span>
             <a href="{{ route('listes') }}" class="sidebar-link {{ request()->routeIs('listes*') ? 'is-active' : '' }}">
                 <span class="sidebar-icon" aria-hidden="true">
                     <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 7h11M8 12h11M8 17h11M4.2 7h.01M4.2 12h.01M4.2 17h.01"/></svg>
                 </span>
                 Mes listes
             </a>
-            <a href="{{ route('recommendations.genre.create') }}" class="sidebar-link {{ request()->routeIs('recommendations.*') ? 'is-active' : '' }}">
+            <a href="{{ route('recommendations.genre.create') }}" class="sidebar-link {{ request()->routeIs('recommendations.genre.*') ? 'is-active' : '' }}">
                 <span class="sidebar-icon" aria-hidden="true">
                     <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.5 14.8 8l5.9.9-4.3 4.2 1 5.9-5.4-2.8-5.4 2.8 1-5.9L3.3 9l5.9-.9L12 2.5Z"/></svg>
                 </span>

@@ -1,14 +1,16 @@
 body:has(.mood-dashboard) {
-    background: #eef2f5;
+    background: #fff;
     color: #1a2333;
     font-family: 'Instrument Sans', 'Segoe UI', sans-serif;
     letter-spacing: -0.02em;
 }
 
 .mood-dashboard {
-    max-width: 1280px;
-    margin: 0 auto;
-    padding: 20px 28px 56px;
+    width: min(1120px, calc(100% - 80px));
+    max-width: 1120px;
+    margin-inline: auto;
+    padding: 32px 0 56px;
+    box-sizing: border-box;
 }
 
 .dashboard-topbar {
@@ -201,9 +203,10 @@ body:has(.mood-dashboard) {
 }
 
 .film-poster {
-    height: 190px;
-    max-height: 190px;
+    height: auto;
+    max-height: none;
     width: 100%;
+    aspect-ratio: 0.68 / 1;
     object-fit: cover;
     border-radius: 18px;
     box-shadow: 0 14px 20px rgba(20, 28, 39, 0.08);
@@ -386,8 +389,8 @@ body:has(.mood-dashboard) {
 
 .recommendation-grid {
     display: grid;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-    gap: 14px;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 28px;
     overflow-x: auto;
     padding: 2px 2px 8px;
 }
@@ -404,8 +407,9 @@ body:has(.mood-dashboard) {
 .recommendation-card img,
 .recommendation-card-placeholder {
     display: block;
-    width: 100%;
-    aspect-ratio: 1.35 / 1;
+    width: 170px;
+    height: 230px;
+    aspect-ratio: 0.74 / 1;
     margin-bottom: 3px;
     min-width: 0;
     border-radius: 10px;
@@ -645,6 +649,7 @@ body:has(.mood-dashboard) {
 
 @media (max-width: 720px) {
     .mood-dashboard {
+        width: auto;
         padding-left: 14px;
         padding-right: 14px;
     }
@@ -654,7 +659,7 @@ body:has(.mood-dashboard) {
     }
 
     .recommendation-grid {
-        grid-template-columns: repeat(4, minmax(126px, 1fr));
+        grid-template-columns: repeat(5, minmax(126px, 1fr));
     }
 
     .base-search {
@@ -674,4 +679,17 @@ body:has(.mood-dashboard) {
     .activity-calendar {
         gap: 8px 10px;
     }
+}
+
+/* Keep the dashboard structured without the overly rounded card treatment. */
+.mood-dashboard .topbar-search,
+.mood-dashboard .mood-hero,
+.mood-dashboard .film-poster,
+.mood-dashboard .bottom-card,
+.mood-dashboard .recommendation-block,
+.mood-dashboard .recommendation-card img,
+.mood-dashboard .recommendation-card-placeholder,
+.mood-dashboard .activity-panel,
+.mood-dashboard .release-box {
+    border-radius: 4px;
 }

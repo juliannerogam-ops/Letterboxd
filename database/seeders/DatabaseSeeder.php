@@ -16,6 +16,7 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         $this->call(FilmSeeder::class);
+        $this->call(GenreRecommendationSeeder::class);
 
         $admin = User::firstOrNew([
             'email' => env('ADMIN_EMAIL', 'admin@example.com'),

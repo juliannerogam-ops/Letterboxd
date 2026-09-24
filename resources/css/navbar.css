@@ -1,7 +1,7 @@
 body:has(.sidebar-nav) {
     min-height: 100vh;
     padding-left: 264px;
-    background: #f4f7fb;
+    background: #fff;
     color: #182235;
     font-family: 'Instrument Sans', 'Segoe UI', sans-serif;
 }
@@ -15,7 +15,7 @@ body:has(.sidebar-nav) {
     width: 248px;
     flex-direction: column;
     padding: 28px 14px 18px;
-    background: #eef3f9;
+    background: #fff;
     border-right: 1px solid #dfe6ef;
 }
 
@@ -43,6 +43,19 @@ body:has(.sidebar-nav) {
     flex-direction: column;
     gap: 7px;
     margin-top: 32px;
+}
+
+.sidebar-section-label {
+    padding: 0 10px 4px;
+    color: #9aa5b4;
+    font-size: 0.64rem;
+    font-weight: 800;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+}
+
+.sidebar-section-label--collection {
+    margin-top: 22px;
 }
 
 .sidebar-link {
@@ -176,4 +189,9 @@ body:has(.sidebar-nav) {
     .sidebar-account {
         margin-top: 18px;
     }
+}
+
+.sidebar-link,
+.sidebar-account {
+    border-radius: 4px;
 }

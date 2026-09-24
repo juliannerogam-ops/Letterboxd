@@ -13,20 +13,26 @@ class RecommendationController extends Controller
     public function index(Request $request): View
     {
         $activeGenre = $request->string('genre')->toString();
+        $genreAliases = $this->genreAliases();
+        $activeAliases = $genreAliases[$activeGenre] ?? [];
 
         $films = Film::query()
-            ->when($activeGenre !== '' && $activeGenre !== 'Tous', function ($query) use ($activeGenre): void {
-                $query->where('genre', 'like', '%'.$activeGenre.'%');
+            ->when($activeGenre !== '' && $activeGenre !== 'Tous', function ($query) use ($activeAliases): void {
+                $query->where(function ($genreQuery) use ($activeAliases): void {
+                    foreach ($activeAliases as $alias) {
+                        $genreQuery->orWhere('genre', 'like', '%'.$alias.'%');
+                    }
+                });
             })
             ->orderByDesc('avis_count')
             ->orderBy('titre')
-            ->limit(8)
+            ->limit(13)
             ->get();
 
         return view('recommendations.index', [
             'films' => $films,
             'activeGenre' => $activeGenre !== '' ? $activeGenre : 'Tous',
-            'genres' => ['Tous', 'Comédie', 'Drame', 'Romance', 'Thriller', 'Fantastique'],
+            'genres' => array_keys($genreAliases),
         ]);
     }
 
@@ -49,6 +55,11 @@ class RecommendationController extends Controller
         $request->session()->put('preferred_genre', $validated['genre']);
         if (filled($validated['mood'] ?? null)) {
             $request->session()->put('preferred_mood', $validated['mood']);
+            $request->session()->put('preferred_genres', array_values(array_unique([
+                $validated['genre'],
+                ...$this->moodGenres()[$validated['mood']],
+            ])));
+            $request->session()->put('preferred_mood_titles', $this->moodFilms()[$validated['mood']]);
         }
 
         return redirect()->route('dashboard');
@@ -109,6 +120,42 @@ class RecommendationController extends Controller
             'Fatiguée' => ['Animation', 'Comédie', 'Documentaire'],
             'Neutre' => ['Drame', 'Comédie', 'Documentaire'],
             'Ne sais pas trop' => ['Fantastique', 'Aventure', 'Animation'],
+        ];
+    }
+
+    private function genreAliases(): array
+    {
+        return [
+            'Tous' => [],
+            'Romantique' => ['Romantique', 'Romance', 'Romantic'],
+            'Suspense' => ['Suspense'],
+            'Drame' => ['Drame', 'Drama'],
+            'Comédie' => ['Comédie', 'Comedy'],
+            'Action' => ['Action'],
+            'Fantastique' => ['Fantastique', 'Fantasy'],
+            'Aventure' => ['Aventure', 'Adventure'],
+            'Émotion' => ['Émotion', 'Emotion'],
+            'Horreur' => ['Horreur', 'Horror'],
+            'Thriller' => ['Thriller'],
+            'Documentaire' => ['Documentaire', 'Documentary'],
+            'Animation' => ['Animation'],
+            'Biopic' => ['Biopic'],
+            'Science-fiction' => ['Science-fiction', 'Science Fiction', 'Sci-Fi'],
+        ];
+    }
+
+    private function moodFilms(): array
+    {
+        return [
+            'Heureuse' => ['Mamma Mia!', 'La La Land', 'Intouchables', 'Paddington 2', 'Ratatouille', 'The Greatest Showman', 'Crazy Rich Asians', 'Shrek', 'Les Gardiens de la Galaxie', 'Retour vers le futur'],
+            'Stressée' => ['Whiplash', 'Uncut Gems', 'A Quiet Place', '1917', 'The Social Network', 'Black Swan', 'Nightcrawler', 'Prisoners', 'Sicario', 'Good Time'],
+            'Triste' => ['Titanic', 'The Green Mile', 'Forrest Gump', 'Manchester by the Sea', 'Le Tombeau des Lucioles', 'La Vie est Belle', 'Coco', 'Wonder', 'À la recherche du bonheur', 'Hachi'],
+            'Calme' => ['Perfect Days', 'Paterson', 'Lost in Translation', 'Before Sunrise', "Le Fabuleux Destin d'Amélie Poulain", 'My Neighbor Totoro', 'Call Me by Your Name', 'Pride & Prejudice', 'The Secret Life of Walter Mitty', 'Little Women'],
+            'Anxieuse' => ['Get Out', 'Shutter Island', 'Gone Girl', 'The Machinist', 'Midsommar', 'Hereditary', 'The Truman Show', 'Donnie Darko', 'The Lighthouse', 'Parasite'],
+            'Énervée' => ['Kill Bill', 'John Wick', 'Mad Max: Fury Road', 'Fight Club', 'The Dark Knight', 'Gladiator', 'V pour Vendetta', 'Baby Driver', 'Django Unchained', 'The Hunger Games'],
+            'Fatiguée' => ['Kiki la petite sorcière', 'Ratatouille', 'Paddington', 'Toy Story', 'My Neighbor Totoro', 'The Holiday', 'Chef', 'About Time', 'Fantastic Mr. Fox', 'Amélie'],
+            'Neutre' => ['The Grand Budapest Hotel', "Ocean's Eleven", 'The Martian', 'Catch Me If You Can', 'The Truman Show', 'Knives Out', 'Moneyball', 'The Secret Life of Walter Mitty', 'Now You See Me', 'The Intern'],
+            'Ne sais pas trop' => ['Everything Everywhere All at Once', 'Eternal Sunshine of the Spotless Mind', 'Inception', 'The Truman Show', 'Spider-Man: Into the Spider-Verse', 'Her', 'The Grand Budapest Hotel', 'The Secret Life of Walter Mitty', 'Arrival', 'Lost in Translation'],
         ];
     }
 }

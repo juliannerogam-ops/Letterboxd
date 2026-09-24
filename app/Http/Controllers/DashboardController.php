@@ -21,6 +21,9 @@ class DashboardController extends Controller
         }
 
         $genre = $request->session()->get('preferred_genre', 'Action');
+        $preferredGenres = $request->session()->get('preferred_genres', [$genre]);
+        $preferredMoodTitles = $request->session()->get('preferred_mood_titles', []);
+        $mood = $request->session()->get('preferred_mood');
 
         if (! $request->session()->has('preferred_genre')) {
             $request->session()->put('preferred_genre', $genre);
@@ -80,11 +83,25 @@ class DashboardController extends Controller
         $topFive->load('films');
 
         $recommendations = Film::query()
-            ->where('genre', 'like', '%'.$genre.'%')
+            ->where(function ($query) use ($preferredGenres): void {
+                foreach ($preferredGenres as $preferredGenre) {
+                    $query->orWhere('genre', 'like', '%'.$preferredGenre.'%');
+                }
+            })
+            ->when($preferredMoodTitles !== [], function ($query) use ($preferredMoodTitles): void {
+                $query->orWhereIn('titre', $preferredMoodTitles);
+            })
             ->whereNotIn('id', $watchlistFilms->pluck('id'))
+            ->orderByRaw('CASE WHEN genre LIKE ? THEN 0 ELSE 1 END', ['%'.$genre.'%'])
             ->orderByRaw("CASE WHEN affiche_url IS NULL OR affiche_url = '' THEN 1 ELSE 0 END")
             ->orderBy('titre')
-            ->get();
+            ->get()
+            ->sortBy(function (Film $film) use ($preferredMoodTitles): int {
+                $position = array_search($film->titre, $preferredMoodTitles, true);
+
+                return $position === false ? PHP_INT_MAX : $position;
+            })
+            ->values();
 
         $releaseFilms = Film::query()
             ->whereNotNull('date_sortie')
@@ -103,6 +120,7 @@ class DashboardController extends Controller
 
         return view('dashboard', compact(
             'genre',
+            'mood',
             'watchlistFilms',
             'recommendations',
             'topFive',

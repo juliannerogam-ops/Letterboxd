@@ -141,6 +141,7 @@
         function renderGenres(moodName) {
             const selectedGenres = new Set(moodMap[moodName] ?? []);
             genreOptions.innerHTML = '';
+            selectedGenreInput.value = [...selectedGenres][0] || '';
 
             allGenres.forEach((genre) => {
                 const button = document.createElement('button');

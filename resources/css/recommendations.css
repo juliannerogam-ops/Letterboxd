@@ -18,13 +18,13 @@
 body:has(.mood-test-shell) {
     min-height: 100vh;
     margin: 0;
-    background: var(--bg-page);
+    background: #fff;
     color: var(--text);
     font-family: 'Instrument Sans', 'Segoe UI', sans-serif;
 }
 
 .mood-test-shell {
-    width: min(1180px, calc(100vw - 64px));
+    width: min(1120px, calc(100vw - 80px));
     margin: 24px auto 0;
     padding: 0 0 32px;
     box-sizing: border-box;
@@ -337,6 +337,12 @@ body:has(.mood-test-shell) {
         min-height: 160px;
     }
 
+
+.mood-option,
+.genre-chip,
+.mood-next {
+    border-radius: 4px;
+}
     .mood-footer,
     .mood-panel-footer {
         flex-direction: column;

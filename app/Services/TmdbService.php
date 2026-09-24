@@ -2,12 +2,11 @@
 
 namespace App\Services;
 
-use Illuminate\Http\Client\PendingRequest;
-use Illuminate\Support\Facades\Http;
 use DOMDocument;
 use DOMElement;
 use DOMXPath;
-use RuntimeException;
+use Illuminate\Http\Client\PendingRequest;
+use Illuminate\Support\Facades\Http;
 
 class TmdbService
 {
@@ -19,6 +18,26 @@ class TmdbService
             ->body();
 
         return $this->parseMoviePage($html, $tmdbId);
+    }
+
+    public function getMovieDetailsByTitle(string $title): ?array
+    {
+        $html = $this->client()
+            ->get('/search/movie', ['query' => $title, 'language' => 'fr-FR'])
+            ->throw()
+            ->body();
+
+        $xpath = $this->xpath($html);
+        $movieId = null;
+
+        foreach ($xpath->query('//a[contains(@href, "/movie/")]') as $link) {
+            if ($link instanceof DOMElement && preg_match('~/movie/(\d+)~', $link->getAttribute('href'), $matches)) {
+                $movieId = (int) $matches[1];
+                break;
+            }
+        }
+
+        return $movieId === null ? null : $this->getMovieDetails($movieId);
     }
 
     public function discoverMovies(int $page, ?int $year = null): array
@@ -81,10 +100,25 @@ class TmdbService
 
         $poster = $xpath->evaluate('string((//img[contains(@src, "/t/p/")])[1]/@src)');
         if (str_starts_with($poster, '/')) {
-            $poster = 'https://image.tmdb.org' . $poster;
+            $poster = 'https://image.tmdb.org'.$poster;
         }
 
         $description = $this->text($xpath, '//div[contains(@class, "overview")]//p');
+        $rating = null;
+        $ratingCount = 0;
+
+        foreach ($xpath->query('//script[@type="application/ld+json"]') as $script) {
+            $json = json_decode($script->textContent, true);
+
+            if (! is_array($json) || ! isset($json['aggregateRating'])) {
+                continue;
+            }
+
+            $ratingValue = (float) ($json['aggregateRating']['ratingValue'] ?? 0);
+            $rating = $ratingValue > 0 ? round($ratingValue / 2, 1) : null;
+            $ratingCount = (int) ($json['aggregateRating']['ratingCount'] ?? 0);
+            break;
+        }
 
         return [
             'tmdb_id' => $tmdbId,
@@ -97,6 +131,8 @@ class TmdbService
             'date_sortie' => $releaseDate,
             'duree_minutes' => $duration ?: null,
             'affiche_url' => $poster ?: null,
+            'note' => $rating,
+            'avis_count' => $ratingCount,
             'statut_sortie' => filled($releaseDate) && $releaseDate <= now()->toDateString()
                 ? 'Film sorti'
                 : 'Film a venir',
@@ -118,7 +154,7 @@ class TmdbService
     {
         $document = new DOMDocument;
         libxml_use_internal_errors(true);
-        $document->loadHTML('<?xml encoding="UTF-8">' . $html);
+        $document->loadHTML('<?xml encoding="UTF-8">'.$html);
         libxml_clear_errors();
 
         return new DOMXPath($document);

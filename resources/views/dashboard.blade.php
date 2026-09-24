@@ -90,13 +90,15 @@
         <div class="nested-section">
             <div class="recommendation-heading">
                 <div>
-                    <h4>On pense que ça pourrait vous plaire aussi</h4>
-                    <p class="recommendation-subtitle">Une sélection de films pour vous.</p>
+                    <h4>{{ $mood ? 'Films pour ton mood : '.$mood : 'On pense que ça pourrait vous plaire aussi' }}</h4>
+                    <p class="recommendation-subtitle">
+                        {{ $mood ? 'Une sélection de '.$genre.' pour accompagner ton mood.' : 'Une sélection de films pour vous.' }}
+                    </p>
                 </div>
                 <a class="recommendation-see-all" href="{{ route('recommendations.index') }}">Voir tout</a>
             </div>
             @php
-                $suggestedFilms = $recommendations->take(4);
+                $suggestedFilms = $recommendations->take(5);
             @endphp
 
             <div class="recommendation-grid">
@@ -112,7 +114,7 @@
                     </a>
                 @endforeach
 
-                @for ($i = $suggestedFilms->count(); $i < 4; $i++)
+                @for ($i = $suggestedFilms->count(); $i < 5; $i++)
                     <div class="recommendation-card recommendation-card--placeholder">
                         <span class="recommendation-card-placeholder" aria-hidden="true"></span>
                         <strong>À découvrir</strong>
