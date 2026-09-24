@@ -24,7 +24,7 @@ class DashboardController extends Controller
             ->listes()
             ->where('type', Liste::TYPE_WATCHLIST)
             ->with([
-                'films' => fn ($query) => $query->where('genre', $genre),
+                'films' => fn ($query) => $query->where('genre', 'like', '%' . $genre . '%'),
             ])
             ->first();
 
@@ -37,8 +37,8 @@ class DashboardController extends Controller
             ->first();
 
         $recommendations = Film::query()
-            ->where('genre', $genre)
-            ->whereNotIn('id', $watchlistFilms->modelKeys())
+            ->where('genre', 'like', '%' . $genre . '%')
+            ->whereNotIn('id', $watchlistFilms->pluck('id'))
             ->orderBy('titre')
             ->get();
 

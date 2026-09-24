@@ -1,3 +1,11 @@
+<a
+	href="{{ route('film.list') }}"
+	aria-label="Retour à la page précédente"
+	onclick="if (document.referrer) { event.preventDefault(); window.history.back(); }"
+>
+	← Retour
+</a>
+
 <h1>{{ $film->titre }}</h1>
 <h3>{{ $film->genre }}</h3>
 <p>{{ $film->description }}</p>

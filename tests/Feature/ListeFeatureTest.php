@@ -178,6 +178,7 @@ class ListeFeatureTest extends TestCase
 
         $response
             ->assertOk()
+            ->assertSee('Retour à la page précédente')
             ->assertViewHas('lists', function ($lists) use ($existingList, $availableList) {
                 return $lists->contains($availableList)
                     && ! $lists->contains($existingList);

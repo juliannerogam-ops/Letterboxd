@@ -2,6 +2,17 @@
 
 <h1>Tableau de bord</h1>
 
+
+<form method="GET" action="{{ route('film.list') }}">
+    <input
+        type="search"
+        name="q"
+        value="{{ request('q') }}"
+        placeholder="Rechercher un film..."
+    >
+    <button type="submit">Rechercher</button>
+</form>
+
 <section>
     <h2>Recommandations</h2>
 

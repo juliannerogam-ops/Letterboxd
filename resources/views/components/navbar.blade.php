@@ -11,6 +11,8 @@
                     </a>
                 </div>
 
+                
+
                 <!-- Liens de navigation principaux -->
                 <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex sm:items-center">
                     <a href="{{ route('dashboard') }}" class="text-gray-900 hover:text-indigo-600 px-1 pt-1 text-sm font-medium">
@@ -47,7 +49,7 @@
                         </a>
 
                         <span class="text-gray-700 text-sm font-medium">
-                            Bonjour, {{ Auth::user()->name }}
+                            Bonjour {{ Auth::user()->pseudo }}
                         </span>
                         
                         <!-- Formulaire Logout intégré -->
