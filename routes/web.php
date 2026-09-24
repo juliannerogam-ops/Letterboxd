@@ -11,9 +11,8 @@ use App\Http\Controllers\ListeController;
 use App\Http\Controllers\RecommendationController;
 use App\Http\Controllers\AdminController;
 
-Route::get('/', function () {
-    return redirect()->route('login');
-});
+Route::get('/', [DashboardController::class, 'index'])
+    ->name('home');
 
 Route::prefix('film')->name("film.")->group(function () {
     Route::get('/', [FilmController::class, 'list'])

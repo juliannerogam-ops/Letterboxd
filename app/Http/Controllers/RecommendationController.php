@@ -30,15 +30,31 @@ class RecommendationController extends Controller
 
     private function availableGenres(): array
     {
-        return Film::query()
+        $presetGenres = [
+            'Thriller',
+            'Fantasy',
+            'Comedy',
+            'Romance',
+            'Horror',
+            'Historical',
+            'Drama',
+            'Family',
+            'Crime',
+            'Action',
+            'Western',
+            'Sci-Fi',
+            'Documentary',
+        ];
+
+        $filmGenres = Film::query()
             ->whereNotNull('genre')
             ->where('genre', '!=', '')
             ->pluck('genre')
             ->flatMap(fn (string $genres): array => array_map('trim', explode(',', $genres)))
             ->filter()
-            ->unique()
-            ->sort()
-            ->values()
+            ->map(fn (string $genre): string => trim($genre))
             ->all();
+
+        return array_values(array_unique([...$presetGenres, ...$filmGenres]));
     }
 }
