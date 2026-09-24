@@ -10,6 +10,13 @@ use Illuminate\Http\RedirectResponse;
 
 class ListeController extends Controller
 {
+    public function index(Request $request): View
+    {
+        $lists = $request->user()->listes()->with('films')->latest()->get();
+
+        return view('listes', compact('lists'));
+    }
+
     public function create(): View
     {
         return view('listes.create');
@@ -24,7 +31,7 @@ class ListeController extends Controller
 
         $request->user()->listes()->create($validated);
 
-        return redirect()->route('dashboard');
+        return redirect()->route('listes');
     }
 
     public function show(Request $request, Liste $liste): View

@@ -20,11 +20,16 @@ class ListeFeatureTest extends TestCase
         ]);
 
         $this->actingAs($user)
+            ->get(route('listes'))
+            ->assertOk()
+            ->assertViewIs('listes');
+
+        $this->actingAs($user)
             ->post(route('listes.store'), [
                 'titre' => 'Films à voir',
                 'description' => 'Une sélection personnelle',
             ])
-            ->assertRedirect(route('dashboard'));
+            ->assertRedirect(route('listes'));
 
         $liste = $user->listes()->firstOrFail();
 

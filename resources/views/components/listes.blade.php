@@ -1,5 +1,3 @@
-@include('components.navbar')
-
 <h1>Mes listes</h1>
 
 @if ($lists->isEmpty())

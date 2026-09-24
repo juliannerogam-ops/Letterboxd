@@ -49,6 +49,7 @@ Route::get('/dashboard', [DashboardController::class, 'index'])
     ->name('dashboard');
 
 Route::middleware('auth')->group(function () {
+    Route::get('/listes', [ListeController::class, 'index'])->name('listes');
     Route::get('/listes/create', [ListeController::class, 'create'])->name('listes.create');
     Route::post('/listes', [ListeController::class, 'store'])->name('listes.store');
     Route::get('/listes/{liste}', [ListeController::class, 'show'])->name('listes.show');

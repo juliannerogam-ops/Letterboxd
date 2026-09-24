@@ -13,14 +13,9 @@
 
                 <!-- Liens de navigation principaux -->
                 <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex sm:items-center">
-                    <a href="{{ url('/') }}" class="text-gray-900 hover:text-indigo-600 px-1 pt-1 text-sm font-medium">
-                        Accueil
+                    <a href="{{ route('dashboard') }}" class="text-gray-900 hover:text-indigo-600 px-1 pt-1 text-sm font-medium">
+                        Tableau de bord
                     </a>
-                    @auth
-                        <a href="{{ route('dashboard') }}" class="text-gray-500 hover:text-indigo-600 px-1 pt-1 text-sm font-medium">
-                            Mes listes
-                        </a>
-                    @endauth
                 </div>
             </div>
 
@@ -47,6 +42,10 @@
                 @auth
                     <!-- Mode Connecté -->
                     <div class="flex items-center space-x-4">
+                        <a href="{{ route('listes') }}" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-md text-sm font-medium shadow-sm transition">
+                            Mes listes
+                        </a>
+
                         <span class="text-gray-700 text-sm font-medium">
                             Bonjour, {{ Auth::user()->name }}
                         </span>
