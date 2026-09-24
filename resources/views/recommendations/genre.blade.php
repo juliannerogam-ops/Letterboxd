@@ -9,6 +9,9 @@
 
         <h1>Comment est ton mood aujourd'hui ?</h1>
         <span class="mood-subtitle">Choisis ton humeur qui te correspond le plus !</span>
+        <span class="mood-hover-status" id="mood-hover-status" aria-live="polite">
+            {{ $selectedMood ? 'Mood choisi : '.$selectedMood : 'Passe sur une carte pour la découvrir.' }}
+        </span>
 
         <div class="mood-grid" aria-label="Sélection du mood">
             @foreach ($moods as $label => $genres)
@@ -46,6 +49,7 @@
                     data-mood="{{ $label }}"
                     data-genres='@json($genres)'
                     data-tone="{{ $tone }}"
+                    @class(['mood-option', 'is-selected' => $selectedMood === $label])
                     aria-label="Choisir le mood {{ $label }}"
                 >
                     <span class="mood-icon" aria-hidden="true">
@@ -82,6 +86,7 @@
 <form id="mood-form" method="POST" action="{{ route('recommendations.genre.store') }}" style="display:none;">
     @csrf
     <input type="hidden" name="genre" id="selected-genre" value="">
+    <input type="hidden" name="mood" id="selected-mood" value="{{ $selectedMood }}">
 </form>
 
 <script>
@@ -91,10 +96,13 @@
         const steps = document.querySelectorAll('.mood-step');
         const genreOptions = document.getElementById('genre-options');
         const selectedGenreInput = document.getElementById('selected-genre');
+        const selectedMoodInput = document.getElementById('selected-mood');
+        const moodHoverStatus = document.getElementById('mood-hover-status');
         const moodForm = document.getElementById('mood-form');
         const nextButton = document.getElementById('nextMoodStep');
         const confirmButton = document.getElementById('confirmMoodStep');
         const backButtons = document.querySelectorAll('.mood-back');
+        const dashboardUrl = @json(route('dashboard'));
 
         const genreLabels = {
             Romantique: 'Romantique',
@@ -157,8 +165,29 @@
             });
         }
 
-        const firstMood = moodButtons[0];
-        renderGenres(firstMood.dataset.mood);
+        const initialMood = document.querySelector('.mood-option.is-selected') || moodButtons[0];
+        initialMood.classList.add('is-selected');
+        selectedMoodInput.value = initialMood.dataset.mood;
+        renderGenres(initialMood.dataset.mood);
+
+        function selectMood(button) {
+            moodButtons.forEach((candidate) => candidate.classList.toggle('is-selected', candidate === button));
+            selectedMoodInput.value = button.dataset.mood;
+            moodHoverStatus.textContent = 'Mood choisi : ' + button.dataset.mood;
+            renderGenres(button.dataset.mood);
+        }
+
+        function previewMood(button) {
+            moodButtons.forEach((candidate) => candidate.classList.toggle('is-preview', candidate === button));
+        }
+
+        function clearMoodPreview() {
+            moodButtons.forEach((candidate) => candidate.classList.remove('is-preview'));
+            const selectedMood = document.querySelector('.mood-option.is-selected');
+            moodHoverStatus.textContent = selectedMood
+                ? 'Mood choisi : ' + selectedMood.dataset.mood
+                : 'Passe sur une carte pour la découvrir.';
+        }
 
         function showStep(stepNumber) {
             steps.forEach((step) => {
@@ -169,15 +198,23 @@
         }
 
         moodButtons.forEach((button) => {
+            button.addEventListener('mouseenter', function () {
+                previewMood(button);
+            });
+
+            button.addEventListener('mouseleave', clearMoodPreview);
+            button.addEventListener('focus', function () {
+                previewMood(button);
+            });
+            button.addEventListener('blur', clearMoodPreview);
             button.addEventListener('click', function () {
-                moodButtons.forEach((candidate) => candidate.classList.toggle('is-selected', candidate === button));
-                renderGenres(button.dataset.mood);
+                selectMood(button);
             });
         });
 
         nextButton.addEventListener('click', function () {
-            const selectedMood = document.querySelector('.mood-option.is-selected');
-            if (!selectedMood) {
+            const selectedMoodButton = document.querySelector('.mood-option.is-selected');
+            if (!selectedMoodButton) {
                 return;
             }
 
@@ -196,6 +233,13 @@
 
         backButtons.forEach((button) => {
             button.addEventListener('click', function () {
+                const visibleStep = [...steps].find((step) => step.getAttribute('aria-hidden') !== 'true');
+
+                if (visibleStep?.dataset.step === '1') {
+                    window.location.href = dashboardUrl;
+                    return;
+                }
+
                 showStep(1);
             });
         });

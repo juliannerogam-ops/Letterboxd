@@ -18,10 +18,23 @@
         </button>
     </header>
 
+    <section class="mood-hero" aria-labelledby="mood-hero-title">
+        <div class="hero-sheen" aria-hidden="true"></div>
+        <div class="hero-content">
+            <span class="hero-label">NOUVEAU</span>
+            <h1 id="mood-hero-title">Quel est ton mood<br>d'aujourd'hui&nbsp;?</h1>
+            <p>Fais notre test et découvre des films qui te correspondent vraiment.</p>
+            <a class="hero-button" href="{{ route('recommendations.genre.create') }}">
+                Lancer le test
+                <span aria-hidden="true">→</span>
+            </a>
+        </div>
+    </section>
+
     <section class="movie-picker">
         <div class="section-title-row">
             <h2>Envie de regarder un film ?</h2>
-            <a href="{{ route('recommendations.genre.create') }}">Voir tout</a>
+            <a href="{{ route('recommendations.index') }}">Voir tout</a>
         </div>
 
         <div class="film-row">
@@ -31,7 +44,11 @@
 
             @forelse ($featuredFilms as $film)
                 <article class="film-card">
-                    <div class="film-poster poster-{{ $loop->index % 4 + 1 }}" aria-hidden="true"></div>
+                    @if ($film->affiche_url)
+                        <img class="film-poster" src="{{ $film->affiche_url }}" alt="Affiche de {{ $film->titre }}">
+                    @else
+                        <div class="film-poster poster-placeholder" aria-hidden="true"></div>
+                    @endif
                     <div class="film-info">
                         <h3>{{ $film->titre }}</h3>
                         <span>{{ $film->genre ?? 'Film' }}</span>
@@ -71,18 +88,38 @@
         </div>
 
         <div class="nested-section">
-            <h4>On pense que ça pourrait vous plaire aussi</h4>
-            @if ($recommendations->isEmpty())
-                <p>Aucune autre recommandation disponible.</p>
-            @else
-                <ul>
-                    @foreach ($recommendations as $film)
-                        <li>
-                            <a href="{{ route('film.show', ['id' => $film->id]) }}">{{ $film->titre }}</a>
-                        </li>
-                    @endforeach
-                </ul>
-            @endif
+            <div class="recommendation-heading">
+                <div>
+                    <h4>On pense que ça pourrait vous plaire aussi</h4>
+                    <p class="recommendation-subtitle">Une sélection de films pour vous.</p>
+                </div>
+                <a class="recommendation-see-all" href="{{ route('recommendations.index') }}">Voir tout</a>
+            </div>
+            @php
+                $suggestedFilms = $recommendations->take(4);
+            @endphp
+
+            <div class="recommendation-grid">
+                @foreach ($suggestedFilms as $film)
+                    <a class="recommendation-card" href="{{ route('film.show', ['id' => $film->id]) }}">
+                        @if ($film->affiche_url)
+                            <img src="{{ $film->affiche_url }}" alt="Affiche de {{ $film->titre }}">
+                        @else
+                            <span class="recommendation-card-placeholder" aria-hidden="true"></span>
+                        @endif
+                        <strong>{{ $film->titre }}</strong>
+                        <span>{{ $film->genre ?? 'Film' }}</span>
+                    </a>
+                @endforeach
+
+                @for ($i = $suggestedFilms->count(); $i < 4; $i++)
+                    <div class="recommendation-card recommendation-card--placeholder">
+                        <span class="recommendation-card-placeholder" aria-hidden="true"></span>
+                        <strong>À découvrir</strong>
+                        <span>Prochainement</span>
+                    </div>
+                @endfor
+            </div>
         </div>
     </section>
 
@@ -214,4 +251,28 @@
     </section>
 
     <script type="application/json" id="release-films-data">@json($releaseFilms)</script>
+
+    <script>
+        document.querySelectorAll('.journal-day').forEach((day) => {
+            const moodByClass = {
+                'mood-rose': 'Heureuse',
+                'mood-sky': 'Triste',
+                'mood-amber': 'Stressée',
+                'mood-mint': 'Calme',
+                'mood-lavender': 'Anxieuse',
+                'mood-gray': 'Neutre',
+                'mood-pink': 'Heureuse',
+            };
+
+            const moodClass = Object.keys(moodByClass).find((className) => day.classList.contains(className));
+
+            if (!moodClass || day.classList.contains('journal-day--muted')) {
+                return;
+            }
+
+            const mood = moodByClass[moodClass];
+            day.title = `Jour ${day.textContent.trim()} : mood ${mood}`;
+            day.setAttribute('aria-label', `Jour ${day.textContent.trim()}, mood ${mood}`);
+        });
+    </script>
 </div>

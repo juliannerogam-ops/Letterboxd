@@ -10,21 +10,46 @@ use Illuminate\Validation\Rule;
 
 class RecommendationController extends Controller
 {
+    public function index(Request $request): View
+    {
+        $activeGenre = $request->string('genre')->toString();
+
+        $films = Film::query()
+            ->when($activeGenre !== '' && $activeGenre !== 'Tous', function ($query) use ($activeGenre): void {
+                $query->where('genre', 'like', '%'.$activeGenre.'%');
+            })
+            ->orderByDesc('avis_count')
+            ->orderBy('titre')
+            ->limit(8)
+            ->get();
+
+        return view('recommendations.index', [
+            'films' => $films,
+            'activeGenre' => $activeGenre !== '' ? $activeGenre : 'Tous',
+            'genres' => ['Tous', 'Comédie', 'Drame', 'Romance', 'Thriller', 'Fantastique'],
+        ]);
+    }
+
     public function create(): View
     {
         $genres = $this->availableGenres();
         $moods = $this->moodGenres();
+        $selectedMood = session('preferred_mood');
 
-        return view('recommendations.genre', compact('genres', 'moods'));
+        return view('recommendations.genre', compact('genres', 'moods', 'selectedMood'));
     }
 
     public function store(Request $request): RedirectResponse
     {
         $validated = $request->validate([
             'genre' => ['required', 'string', 'regex:/^[^,]+$/', Rule::in($this->availableGenres())],
+            'mood' => ['nullable', 'string', Rule::in(array_keys($this->moodGenres()))],
         ]);
 
         $request->session()->put('preferred_genre', $validated['genre']);
+        if (filled($validated['mood'] ?? null)) {
+            $request->session()->put('preferred_mood', $validated['mood']);
+        }
 
         return redirect()->route('dashboard');
     }

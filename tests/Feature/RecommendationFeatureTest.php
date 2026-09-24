@@ -5,7 +5,9 @@ namespace Tests\Feature;
 use App\Models\Film;
 use App\Models\Liste;
 use App\Models\User;
+use Database\Seeders\FilmSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Artisan;
 use Tests\TestCase;
 
 class RecommendationFeatureTest extends TestCase
@@ -45,6 +47,31 @@ class RecommendationFeatureTest extends TestCase
             ->get(route('recommendations.genre.create'))
             ->assertOk()
             ->assertSee('Confirmer');
+    }
+
+    public function test_recommendation_results_show_filters_and_film_metadata(): void
+    {
+        $user = User::factory()->create();
+
+        Film::create([
+            'tmdb_id' => 7,
+            'titre' => 'Little Miss Sunshine',
+            'genre' => 'Comédie',
+            'affiche_url' => 'https://example.com/little-miss-sunshine.jpg',
+            'note' => 3.8,
+            'avis_count' => 128,
+            'date_sortie' => '2006-08-18',
+        ]);
+
+        $this->actingAs($user)
+            ->get(route('recommendations.index'))
+            ->assertOk()
+            ->assertSee('Voici tes recommandations !')
+            ->assertSee('Comédie')
+            ->assertSee('Little Miss Sunshine')
+            ->assertSee('3.8')
+            ->assertSee('(128 avis)')
+            ->assertSee('18/08/2006');
     }
 
     public function test_recommendations_find_a_genre_inside_a_film_genre_list(): void
@@ -96,6 +123,28 @@ class RecommendationFeatureTest extends TestCase
                 return $releaseFilms->contains(fn (array $releaseFilm): bool => $releaseFilm['title'] === $film->titre
                     && $releaseFilm['date'] === '2026-09-24');
             });
+    }
+
+    public function test_seed_populates_at_least_eight_releases_per_month_from_january_to_september_2026(): void
+    {
+        Artisan::call('db:seed', ['--class' => FilmSeeder::class]);
+
+        $monthlyCounts = Film::query()
+            ->whereYear('date_sortie', 2026)
+            ->whereMonth('date_sortie', '>=', 1)
+            ->whereMonth('date_sortie', '<=', 9)
+            ->selectRaw('CAST(strftime("%m", date_sortie) AS INTEGER) as month')
+            ->get()
+            ->groupBy('month')
+            ->map(fn ($films) => $films->count());
+
+        foreach (range(1, 9) as $month) {
+            $this->assertGreaterThanOrEqual(
+                8,
+                $monthlyCounts->get($month, 0),
+                "Le mois {$month} n'a pas assez de sorties réelles enregistrées en 2026."
+            );
+        }
     }
 
     public function test_user_can_add_a_calendar_film_to_the_watchlist(): void

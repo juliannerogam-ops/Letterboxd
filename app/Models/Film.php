@@ -2,8 +2,8 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Film extends Model
@@ -23,6 +23,8 @@ class Film extends Model
         'date_sortie',
         'duree_minutes',
         'affiche_url',
+        'note',
+        'avis_count',
         'statut_sortie',
         'derniere_synchronisation',
         'realisateur_id',
@@ -34,6 +36,8 @@ class Film extends Model
     {
         return [
             'date_sortie' => 'date',
+            'note' => 'decimal:1',
+            'avis_count' => 'integer',
             'derniere_synchronisation' => 'datetime',
             'est_sorti' => 'boolean',
         ];

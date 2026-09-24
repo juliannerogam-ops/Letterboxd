@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Contracts\View\View;
-use Illuminate\Http\RedirectResponse; // 1. Ajoutez cet import en haut
-use App\Models\Liste;
 use App\Models\Film;
+use App\Models\Liste; // 1. Ajoutez cet import en haut
+use Illuminate\Contracts\View\View;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 
@@ -14,31 +14,37 @@ class DashboardController extends Controller
     // 2. Modifiez le type de retour ici pour autoriser View OU RedirectResponse
     public function index(Request $request): View|RedirectResponse
     {
+        $user = $request->user();
+
+        if (! $user) {
+            return redirect()->route('login');
+        }
+
         $genre = $request->session()->get('preferred_genre', 'Action');
 
         if (! $request->session()->has('preferred_genre')) {
             $request->session()->put('preferred_genre', $genre);
         }
 
-        $watchlist = $request->user()
+        $watchlist = $user
             ->listes()
             ->where('type', Liste::TYPE_WATCHLIST)
             ->with([
-                'films' => fn ($query) => $query->where('genre', 'like', '%' . $genre . '%'),
+                'films' => fn ($query) => $query->where('genre', 'like', '%'.$genre.'%'),
             ])
             ->first();
 
         $watchlistFilms = $watchlist?->films ?? collect();
         $watchlistFilmIds = $watchlist?->films()->pluck('film.id')->all() ?? [];
 
-        $topFive = $request->user()
+        $topFive = $user
             ->listes()
             ->where('type', Liste::TYPE_TOP_FIVE)
             ->with('films')
             ->first();
 
         if (! $topFive) {
-            $topFive = $request->user()->listes()->create([
+            $topFive = $user->listes()->create([
                 'titre' => 'Mon top 5',
                 'type' => Liste::TYPE_TOP_FIVE,
             ]);
@@ -46,7 +52,7 @@ class DashboardController extends Controller
 
         if ($topFive->films()->count() < 5) {
             $defaultTopFive = Film::query()
-                ->where('genre', 'like', '%' . $genre . '%')
+                ->where('genre', 'like', '%'.$genre.'%')
                 ->whereNotIn('id', $topFive->films()->pluck('film.id'))
                 ->orderBy('titre')
                 ->limit(5)
@@ -74,13 +80,15 @@ class DashboardController extends Controller
         $topFive->load('films');
 
         $recommendations = Film::query()
-            ->where('genre', 'like', '%' . $genre . '%')
+            ->where('genre', 'like', '%'.$genre.'%')
             ->whereNotIn('id', $watchlistFilms->pluck('id'))
+            ->orderByRaw("CASE WHEN affiche_url IS NULL OR affiche_url = '' THEN 1 ELSE 0 END")
             ->orderBy('titre')
             ->get();
 
         $releaseFilms = Film::query()
             ->whereNotNull('date_sortie')
+            ->whereYear('date_sortie', 2026)
             ->orderBy('date_sortie')
             ->orderBy('titre')
             ->get(['id', 'titre', 'date_sortie'])

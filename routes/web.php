@@ -1,36 +1,34 @@
 <?php
 
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\FilmController;
+use App\Http\Controllers\AdminController;
 use App\Http\Controllers\AuthController;
-use App\Http\Controllers\Controller;
-use App\Http\Requests\FilmRequest;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\FilmController;
 use App\Http\Controllers\ListeController;
 use App\Http\Controllers\RecommendationController;
-use App\Http\Controllers\AdminController;
+use Illuminate\Support\Facades\Route;
 
 Route::get('/', [DashboardController::class, 'index'])
+    ->middleware('auth')
     ->name('home');
 
-Route::prefix('film')->name("film.")->group(function () {
+Route::prefix('film')->name('film.')->group(function () {
     Route::get('/', [FilmController::class, 'list'])
         ->middleware(['auth', 'admin'])
-        ->name("list");
-    Route::get('/import', [FilmController::class, 'importView'])->name("import_view");
-    Route::post('/import', [FilmController::class, 'importFromUrl'])->name("import");
-    Route::get("/{id}", [FilmController::class, 'show'])->whereUuid('id')->name("show");
+        ->name('list');
+    Route::get('/import', [FilmController::class, 'importView'])->name('import_view');
+    Route::post('/import', [FilmController::class, 'importFromUrl'])->name('import');
+    Route::get('/{id}', [FilmController::class, 'show'])->whereUuid('id')->name('show');
 
     Route::get('/create', function () {
         return view('films.create');
-    })->name("view_create");
-    Route::post('/create', [FilmController::class, 'create'])->name("create");
+    })->name('view_create');
+    Route::post('/create', [FilmController::class, 'create'])->name('create');
 
-    Route::get("/{id}/edit", [FilmController::class, 'edit_view'])->name("edit_view");
-    Route::post("/{id}/edit", [FilmController::class, 'edit'])->name("edit");
+    Route::get('/{id}/edit', [FilmController::class, 'edit_view'])->name('edit_view');
+    Route::post('/{id}/edit', [FilmController::class, 'edit'])->name('edit');
 
-    Route::get("/{id}/delete", [FilmController::class, 'delete'])->name("delete");
+    Route::get('/{id}/delete', [FilmController::class, 'delete'])->name('delete');
 });
 
 Route::middleware('guest')->group(function () {
@@ -55,7 +53,6 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::patch('/users/{user}/promote', [AdminController::class, 'promote'])->name('users.promote');
 });
 
-
 Route::get('/dashboard', [DashboardController::class, 'index'])
     ->middleware('auth')
     ->name('dashboard');
@@ -75,6 +72,9 @@ Route::middleware('auth')->group(function () {
 });
 
 Route::middleware('auth')->group(function () {
+    Route::get('/recommendations', [RecommendationController::class, 'index'])
+        ->name('recommendations.index');
+
     Route::get('/preferences/genre', [RecommendationController::class, 'create'])
         ->name('recommendations.genre.create');
 
