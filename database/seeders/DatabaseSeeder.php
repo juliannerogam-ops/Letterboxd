@@ -15,11 +15,24 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // User::factory(10)->create();
-
-        User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
+        $admin = User::firstOrNew([
+            'email' => env('ADMIN_EMAIL', 'admin@example.com'),
         ]);
+
+        if (! $admin->exists) {
+            $adminPassword = env('ADMIN_PASSWORD');
+
+            if (blank($adminPassword)) {
+                throw new \RuntimeException('Définissez ADMIN_PASSWORD avant de créer le compte administrateur.');
+            }
+
+            $admin->forceFill([
+                'name' => 'Administrateur',
+                'first_name' => 'Admin',
+                'pseudo' => 'admin',
+                'password' => $adminPassword,
+                'is_admin' => true,
+            ])->save();
+        }
     }
 }

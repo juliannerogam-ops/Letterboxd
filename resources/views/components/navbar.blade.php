@@ -48,6 +48,12 @@
                             Mes listes
                         </a>
 
+                        @if (Auth::user()->is_admin)
+                            <a href="{{ route('admin.index') }}" class="bg-gray-800 hover:bg-gray-900 text-white px-4 py-2 rounded-md text-sm font-medium shadow-sm transition">
+                                Admin
+                            </a>
+                        @endif
+
                         <span class="text-gray-700 text-sm font-medium">
                             Bonjour {{ Auth::user()->pseudo }}
                         </span>

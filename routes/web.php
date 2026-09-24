@@ -9,6 +9,7 @@ use App\Http\Requests\FilmRequest;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ListeController;
 use App\Http\Controllers\RecommendationController;
+use App\Http\Controllers\AdminController;
 
 Route::get('/', function () {
     return redirect()->route('login');
@@ -46,6 +47,11 @@ Route::middleware('guest')->group(function () {
 Route::post('/logout', [AuthController::class, 'logout'])
     ->middleware('auth')
     ->name('logout');
+
+Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {
+    Route::get('/', [AdminController::class, 'index'])->name('index');
+    Route::patch('/users/{user}/promote', [AdminController::class, 'promote'])->name('users.promote');
+});
 
 
 Route::get('/dashboard', [DashboardController::class, 'index'])

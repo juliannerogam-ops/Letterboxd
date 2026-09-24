@@ -80,6 +80,9 @@ class AuthController extends Controller
 
         $request->session()->regenerate();
 
+        if ($request->user()->is_admin) {
+            return redirect()->route('admin.index');
+        }
         
         return redirect()->route('recommendations.genre.create');
     }
