@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\Rule;
 use App\Models\Liste;
 use App\Models\User;
 
@@ -34,6 +35,32 @@ class AuthController extends Controller
     public function showLogin()
     {
         return view('auth.login');
+    }
+
+    public function showProfile()
+    {
+        return view('auth.profile', ['user' => Auth::user()]);
+    }
+
+    public function updateProfile(Request $request)
+    {
+        $user = $request->user();
+        $validated = $request->validate([
+            'name' => ['required', 'string', 'max:255'],
+            'first_name' => ['required', 'string', 'max:255'],
+            'pseudo' => ['required', 'string', 'max:255', Rule::unique('users', 'pseudo')->ignore($user)],
+            'email' => ['required', 'email', Rule::unique('users', 'email')->ignore($user)],
+            'password' => ['nullable', 'confirmed', 'min:8'],
+        ]);
+
+        if (blank($validated['password'] ?? null)) {
+            unset($validated['password']);
+        }
+
+        unset($validated['password_confirmation']);
+        $user->update($validated);
+
+        return redirect()->route('profile')->with('status', 'Vos informations ont été mises à jour.');
     }
 
     public function login(Request $request)

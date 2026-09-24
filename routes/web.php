@@ -53,6 +53,8 @@ Route::get('/dashboard', [DashboardController::class, 'index'])
     ->name('dashboard');
 
 Route::middleware('auth')->group(function () {
+    Route::get('/profile', [AuthController::class, 'showProfile'])->name('profile');
+    Route::put('/profile', [AuthController::class, 'updateProfile'])->name('profile.update');
     Route::get('/listes', [ListeController::class, 'index'])->name('listes');
     Route::get('/listes/create', [ListeController::class, 'create'])->name('listes.create');
     Route::post('/listes', [ListeController::class, 'store'])->name('listes.store');

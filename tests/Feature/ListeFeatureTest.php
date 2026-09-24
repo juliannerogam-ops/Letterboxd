@@ -6,6 +6,7 @@ use App\Models\Film;
 use App\Models\Liste;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Hash;
 use Tests\TestCase;
 
 class ListeFeatureTest extends TestCase
@@ -53,6 +54,38 @@ class ListeFeatureTest extends TestCase
             ->assertRedirect(route('listes.show', $liste));
 
         $this->assertTrue($liste->films()->whereKey($film)->exists());
+    }
+
+    public function test_authenticated_user_can_view_and_update_profile(): void
+    {
+        $user = User::factory()->create(['name' => 'Martin', 'first_name' => 'Alex', 'pseudo' => 'alex-martin']);
+
+        $this->actingAs($user)->get(route('profile'))
+            ->assertOk()->assertViewIs('auth.profile')->assertSee('alex-martin');
+
+        $this->actingAs($user)->put(route('profile.update'), [
+            'name' => 'Durand', 'first_name' => 'Camille', 'pseudo' => 'camille-durand',
+            'email' => 'camille@example.com', 'password' => '', 'password_confirmation' => '',
+        ])->assertRedirect(route('profile'));
+
+        $this->assertDatabaseHas('users', [
+            'id' => $user->id, 'name' => 'Durand', 'first_name' => 'Camille',
+            'pseudo' => 'camille-durand', 'email' => 'camille@example.com',
+        ]);
+
+        $this->actingAs($user)->put(route('profile.update'), [
+            'name' => 'Durand', 'first_name' => 'Camille', 'pseudo' => 'camille-durand',
+            'email' => 'camille@example.com', 'password' => 'new-password',
+            'password_confirmation' => 'new-password',
+        ])->assertRedirect(route('profile'));
+
+        $this->assertTrue(Hash::check('new-password', $user->refresh()->password));
+    }
+
+    public function test_guest_cannot_view_or_update_profile(): void
+    {
+        $this->get(route('profile'))->assertRedirect(route('login'));
+        $this->put(route('profile.update'))->assertRedirect(route('login'));
     }
 
     public function test_adding_a_film_at_a_top_five_position_shifts_later_films(): void

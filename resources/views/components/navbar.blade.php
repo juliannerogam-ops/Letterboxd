@@ -6,8 +6,8 @@
             <div class="flex">
                 <!-- Logo -->
                 <div class="shrink-0 flex items-center">
-                    <a href="{{ url('/') }}" class="font-bold text-xl text-indigo-600">
-                        MonApplication
+                    <a href="{{ route('profile') }}" class="font-bold text-xl text-indigo-600">
+                        Mon Profil
                     </a>
                 </div>
 
