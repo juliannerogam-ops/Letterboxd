@@ -23,5 +23,7 @@
 
 			<button type="submit">Ajouter</button>
 		</form>
+	@else
+		<p>Ce film est déjà présent dans toutes vos listes.</p>
 	@endif
 @endauth

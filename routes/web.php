@@ -8,6 +8,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\FilmRequest;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ListeController;
+use App\Http\Controllers\RecommendationController;
 
 Route::get('/', function () {
     return redirect()->route('login');
@@ -57,4 +58,12 @@ Route::middleware('auth')->group(function () {
     Route::post('/listes', [ListeController::class, 'store'])->name('listes.store');
     Route::get('/listes/{liste}', [ListeController::class, 'show'])->name('listes.show');
     Route::post('/listes/{liste}/films', [ListeController::class, 'addFilm'])->name('listes.films.store');
+});
+
+Route::middleware('auth')->group(function () {
+    Route::get('/preferences/genre', [RecommendationController::class, 'create'])
+        ->name('recommendations.genre.create');
+
+    Route::post('/preferences/genre', [RecommendationController::class, 'store'])
+        ->name('recommendations.genre.store');
 });

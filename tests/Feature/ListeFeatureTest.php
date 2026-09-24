@@ -108,4 +108,36 @@ class ListeFeatureTest extends TestCase
             'film_id' => $films[4]->id,
         ]);
     }
+
+    public function test_film_page_hides_lists_that_already_contain_the_film(): void
+    {
+        $user = User::factory()->create();
+        $film = Film::create([
+            'tmdb_id' => 550,
+            'titre' => 'Fight Club',
+        ]);
+
+        $existingList = $user->listes()->create([
+            'titre' => 'Déjà vu',
+        ]);
+
+        $availableList = $user->listes()->create([
+            'titre' => 'À regarder',
+        ]);
+
+        $existingList->films()->attach($film);
+
+        $response = $this->actingAs($user)
+            ->get(route('film.show', ['id' => $film->id]));
+
+        $response
+            ->assertOk()
+            ->assertViewHas('lists', function ($lists) use ($existingList, $availableList) {
+                return $lists->contains($availableList)
+                    && ! $lists->contains($existingList);
+            });
+    }
 }
+
+
+
