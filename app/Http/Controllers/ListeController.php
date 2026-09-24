@@ -12,9 +12,22 @@ class ListeController extends Controller
 {
     public function index(Request $request): View
     {
-        $lists = $request->user()->listes()->with('films')->latest()->get();
+        $search = $request->string('q')->trim()->toString();
 
-        return view('listes', compact('lists'));
+        $lists = $request->user()
+            ->listes()
+            ->with('films')
+            ->when($search !== '', function ($query) use ($search) {
+                $query->where(function ($query) use ($search) {
+                    $query
+                        ->where('titre', 'like', '%' . $search . '%')
+                        ->orWhere('description', 'like', '%' . $search . '%');
+                });
+            })
+            ->latest()
+            ->get();
+
+        return view('listes', compact('lists', 'search'));
     }
 
     public function create(): View

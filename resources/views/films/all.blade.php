@@ -14,6 +14,17 @@
 <a href="{{ route('film.view_create') }}">Créer un film</a>
 <a href="{{ route('film.import_view') }}">Importer depuis TMDb</a>
 
+<form method="GET" action="{{ route('film.list') }}">
+    <input
+        type="search"
+        name="q"
+        value="{{ $search }}"
+        placeholder="Rechercher un film..."
+    >
+
+    <button type="submit">Rechercher</button>
+</form>
+
 @foreach ($films as $film)
     <h3>{{ $film->titre }}</h3>
     <p>{{ $film->description }}</p>

@@ -10,11 +10,17 @@ use RuntimeException;
 
 class FilmController extends Controller
 {
-    public function list()
+    public function list(Request $request)
     {
-        $films = Film::all();
+        $search = $request->string('q')->trim()->toString();
 
-        return view('films.all', compact('films'));
+        $films = Film::query()
+            ->when($search !== '', function ($query) use ($search) {
+                $query->where('titre', 'like', '%' . $search . '%');
+            })
+            ->get();
+
+        return view('films.all', compact('films', 'search'));
     }
 
     public function show($id)

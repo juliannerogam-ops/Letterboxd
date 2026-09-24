@@ -2,6 +2,17 @@
 
 <h1>Mes listes</h1>
 
+<form method="GET" action="{{ route('listes') }}">
+    <input
+        type="search"
+        name="q"
+        value="{{ $search }}"
+        placeholder="Rechercher une liste..."
+    >
+
+    <button type="submit">Rechercher</button>
+</form>
+
 <a href="{{ route('listes.create') }}">Créer une liste</a>
 
 @if ($lists->isEmpty())
