@@ -7,6 +7,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\FilmRequest;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\ListeController;
 
 
 Route::prefix('film')->name("film.")->group(function () {
@@ -46,3 +47,10 @@ Route::post('/logout', [AuthController::class, 'logout'])
 Route::get('/dashboard', [DashboardController::class, 'index'])
     ->middleware('auth')
     ->name('dashboard');
+
+Route::middleware('auth')->group(function () {
+    Route::get('/listes/create', [ListeController::class, 'create'])->name('listes.create');
+    Route::post('/listes', [ListeController::class, 'store'])->name('listes.store');
+    Route::get('/listes/{liste}', [ListeController::class, 'show'])->name('listes.show');
+    Route::post('/listes/{liste}/films', [ListeController::class, 'addFilm'])->name('listes.films.store');
+});

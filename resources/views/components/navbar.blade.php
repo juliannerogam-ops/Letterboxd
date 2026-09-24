@@ -18,7 +18,7 @@
                     </a>
                     @auth
                         <a href="{{ route('dashboard') }}" class="text-gray-500 hover:text-indigo-600 px-1 pt-1 text-sm font-medium">
-                            Tableau de bord
+                            Mes listes
                         </a>
                     @endauth
                 </div>
@@ -40,7 +40,7 @@
                                 S'inscrire
                             </a>
                         @endif
-                                
+
                     </div>
                 @endguest
 

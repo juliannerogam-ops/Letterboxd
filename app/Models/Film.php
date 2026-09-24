@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Film extends Model
 {
@@ -36,5 +37,10 @@ class Film extends Model
             'derniere_synchronisation' => 'datetime',
             'est_sorti' => 'boolean',
         ];
+    }
+
+    public function listes(): BelongsToMany
+    {
+        return $this->belongsToMany(Liste::class, 'film_liste');
     }
 }

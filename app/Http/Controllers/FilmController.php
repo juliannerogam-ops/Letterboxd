@@ -20,8 +20,9 @@ class FilmController extends Controller
     public function show($id)
     {
         $film = Film::findOrFail($id);
+        $lists = auth()->check() ? auth()->user()->listes()->get() : collect();
 
-        return view('films.show', compact('film'));
+        return view('films.show', compact('film', 'lists'));
     }
 
     public function importView()
