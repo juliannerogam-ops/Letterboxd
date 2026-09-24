@@ -1,5 +1,19 @@
 @include('components.navbar')
 
+<h1>Mes listes</h1>
+
 <a href="{{ route('listes.create') }}">Créer une liste</a>
 
-@include('components.listes', ['lists' => $lists])
+@if ($lists->isEmpty())
+	<p>Tu n'as encore créé aucune liste.</p>
+@else
+	@foreach ($lists as $list)
+		<article>
+			<h2>
+				<a href="{{ route('listes.show', $list) }}">{{ $list->titre }}</a>
+			</h2>
+			<p>{{ $list->description }}</p>
+			<p>{{ $list->films->count() }} film(s)</p>
+		</article>
+	@endforeach
+@endif
