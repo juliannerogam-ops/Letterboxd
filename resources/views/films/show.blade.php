@@ -8,9 +8,6 @@
 @auth
 	@if ($lists->isNotEmpty())
 		<h2>Ajouter à une liste</h2>
-    @else
-        <p>Ce film est déjà présent dans toutes vos listes.</p>
-    @endif
 
 		<form method="POST" action="{{ route('listes.films.store', $lists->first()) }}">
 			@csrf
@@ -26,5 +23,7 @@
 
 			<button type="submit">Ajouter</button>
 		</form>
+	@else
+		<p>Ce film est déjà présent dans toutes vos listes.</p>
 	@endif
 @endauth
