@@ -58,7 +58,7 @@
             </div>
             <form method="POST" action="{{ route('logout') }}">
                 @csrf
-                <button type="submit" class="sidebar-logout" aria-label="Déconnexion">↪</button>
+                <button type="submit" class="sidebar-logout">Se déconnecter</button>
             </form>
         </div>
     @else

@@ -73,17 +73,26 @@
         <p class="muted-copy">Suggestions pour le genre : {{ $genre }}</p>
 
         <div class="nested-section">
-            <h4>Films de votre watchlist</h4>
+            <div class="watchlist-heading">
+                <h4>Films de votre watchlist</h4>
+                <a href="{{ route('listes') }}">Voir tout</a>
+            </div>
             @if ($watchlistFilms->isEmpty())
                 <p>Aucun film de votre watchlist ne correspond à ce genre.</p>
             @else
-                <ul>
+                <div class="watchlist-film-row">
                     @foreach ($watchlistFilms as $film)
-                        <li>
-                            <a href="{{ route('film.show', ['id' => $film->id]) }}">{{ $film->titre }}</a>
-                        </li>
+                        <a class="watchlist-film-card" href="{{ route('film.show', ['id' => $film->id]) }}">
+                            @if ($film->affiche_url)
+                                <img src="{{ $film->affiche_url }}" alt="Affiche de {{ $film->titre }}">
+                            @else
+                                <span class="watchlist-film-placeholder" aria-hidden="true"></span>
+                            @endif
+                            <strong>{{ $film->titre }}</strong>
+                            <span>{{ $film->genre ?? 'Film' }}</span>
+                        </a>
                     @endforeach
-                </ul>
+                </div>
             @endif
         </div>
 
@@ -192,11 +201,16 @@
                 <button type="button" class="journal-day mood-sky">28</button>
                 <button type="button" class="journal-day mood-mint">29</button>
                 <button type="button" class="journal-day mood-rose">30</button>
-                <button type="button" class="journal-day mood-pink"> </button>
+                <button type="button" class="journal-day mood-pink">31</button>
                 <button type="button" class="journal-day journal-day--muted"> </button>
                 <button type="button" class="journal-day journal-day--muted"> </button>
                 <button type="button" class="journal-day journal-day--muted"> </button>
             </div>
+
+            <p class="selected-mood-day" aria-live="polite">
+                <span class="selected-mood-caption">Mood du jour</span>
+                <strong id="selected-mood-day">Sélectionne une journée</strong>
+            </p>
         </div>
 
         <div class="legacy-block release-box">
@@ -275,6 +289,46 @@
             const mood = moodByClass[moodClass];
             day.title = `Jour ${day.textContent.trim()} : mood ${mood}`;
             day.setAttribute('aria-label', `Jour ${day.textContent.trim()}, mood ${mood}`);
+
+            day.addEventListener('click', function () {
+                document.querySelectorAll('.journal-day.is-active').forEach((activeDay) => {
+                    activeDay.classList.remove('is-active');
+                });
+                day.classList.add('is-active');
+                const activeMoodClass = Object.keys(moodByClass).find((className) => day.classList.contains(className));
+                document.getElementById('selected-mood-day').textContent = `Jour ${day.textContent.trim()} : mood ${moodByClass[activeMoodClass]}`;
+            });
         });
+
+        const activityMonthSelect = document.querySelector('select[name="activity_month"]');
+        const activityMoodClasses = ['mood-rose', 'mood-sky', 'mood-amber', 'mood-mint', 'mood-lavender', 'mood-gray', 'mood-pink'];
+
+        if (activityMonthSelect) {
+            activityMonthSelect.addEventListener('change', function () {
+                document.querySelectorAll('.journal-day:not(.journal-day--muted)').forEach((day) => {
+                    activityMoodClasses.forEach((className) => day.classList.remove(className));
+                    const moodClass = activityMoodClasses[Math.floor(Math.random() * activityMoodClasses.length)];
+                    day.classList.add(moodClass);
+                    day.removeAttribute('title');
+                    day.removeAttribute('aria-label');
+                });
+
+                document.querySelectorAll('.journal-day:not(.journal-day--muted)').forEach((day) => {
+                    const moodByClass = {
+                        'mood-rose': 'Heureuse',
+                        'mood-sky': 'Triste',
+                        'mood-amber': 'Stressée',
+                        'mood-mint': 'Calme',
+                        'mood-lavender': 'Anxieuse',
+                        'mood-gray': 'Neutre',
+                        'mood-pink': 'Heureuse',
+                    };
+                    const moodClass = activityMoodClasses.find((className) => day.classList.contains(className));
+                    const mood = moodByClass[moodClass];
+                    day.title = `Jour ${day.textContent.trim()} : mood ${mood}`;
+                    day.setAttribute('aria-label', `Jour ${day.textContent.trim()}, mood ${mood}`);
+                });
+            });
+        }
     </script>
 </div>

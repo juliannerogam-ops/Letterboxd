@@ -3,8 +3,20 @@
 
 <main class="recommendation-results">
     <header class="recommendation-results-header">
-        <h1>Voici tes recommandations !</h1>
-        <p>Selon ton mood et tes envies, on a sélectionné ces films pour toi.</p>
+        <h1>
+            @if ($selectedMood)
+                Films pour ton mood : {{ $selectedMood }}
+            @else
+                Voici tes recommandations !
+                <span class="recommendation-catalogue-label">Catalogue des films</span>
+            @endif
+        </h1>
+        <p>
+            {{ $selectedMood ? 'On a sélectionné ces films pour correspondre à ton humeur.' : 'Explore tous les films disponibles dans le catalogue.' }}
+            @if ($selectedMood && $moodIntensity)
+                <span class="results-intensity">Intensité {{ $moodIntensity }}/10</span>
+            @endif
+        </p>
     </header>
 
     <nav class="recommendation-filters" aria-label="Filtrer les recommandations">

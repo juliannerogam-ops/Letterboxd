@@ -74,7 +74,31 @@
         <h2>Tu préfères quel type d'ambiance ?</h2>
         <span class="mood-subtitle">Choisis jusqu'à 3 ambiances qui te font envie.</span>
 
+        <div class="mood-palette-strip" aria-hidden="true">
+            <span class="palette-rose"></span>
+            <span class="palette-sky"></span>
+            <span class="palette-amber"></span>
+            <span class="palette-mint"></span>
+            <span class="palette-lavender"></span>
+            <span class="palette-gray"></span>
+        </div>
+
         <div class="genre-options" id="genre-options" aria-live="polite"></div>
+        <p class="genre-selection-status" id="genre-selection-status" aria-live="polite"></p>
+
+        <div class="mood-intensity" aria-labelledby="mood-intensity-title">
+            <div class="mood-intensity-heading">
+                <h3 id="mood-intensity-title">À quel point tu ressens ce mood ?</h3>
+                <strong id="mood-intensity-value">5 / 10</strong>
+            </div>
+            <div class="mood-levels" role="group" aria-label="Intensité du mood de 1 à 10">
+                @for ($level = 1; $level <= 10; $level++)
+                    <button type="button" class="mood-level {{ $level === 5 ? 'is-selected' : '' }}" data-level="{{ $level }}" aria-label="Intensité {{ $level }} sur 10" aria-pressed="{{ $level === 5 ? 'true' : 'false' }}">
+                        <span>{{ $level }}</span>
+                    </button>
+                @endfor
+            </div>
+        </div>
 
         <div class="mood-panel-footer">
             <button type="button" class="mood-back">← Retour</button>
@@ -87,6 +111,7 @@
     @csrf
     <input type="hidden" name="genre" id="selected-genre" value="">
     <input type="hidden" name="mood" id="selected-mood" value="{{ $selectedMood }}">
+    <input type="hidden" name="intensity" id="mood-intensity" value="5">
 </form>
 
 <script>
@@ -97,6 +122,8 @@
         const genreOptions = document.getElementById('genre-options');
         const selectedGenreInput = document.getElementById('selected-genre');
         const selectedMoodInput = document.getElementById('selected-mood');
+        const intensityInput = document.getElementById('mood-intensity');
+        const intensityValue = document.getElementById('mood-intensity-value');
         const moodHoverStatus = document.getElementById('mood-hover-status');
         const moodForm = document.getElementById('mood-form');
         const nextButton = document.getElementById('nextMoodStep');
@@ -142,12 +169,14 @@
             const selectedGenres = new Set(moodMap[moodName] ?? []);
             genreOptions.innerHTML = '';
             selectedGenreInput.value = [...selectedGenres][0] || '';
+            updateGenreStatus(selectedGenres);
 
             allGenres.forEach((genre) => {
                 const button = document.createElement('button');
                 button.type = 'button';
                 button.className = 'genre-chip' + (selectedGenres.has(genre) ? ' is-selected' : '');
                 button.dataset.genre = genre;
+                button.setAttribute('aria-pressed', String(selectedGenres.has(genre)));
                 button.innerHTML = '<span class="check" aria-hidden="true"></span><span>' + (genreLabels[genre] || genre) + '</span>';
 
                 button.addEventListener('click', function () {
@@ -157,13 +186,22 @@
                     }
 
                     button.classList.toggle('is-selected');
+                    button.setAttribute('aria-pressed', String(button.classList.contains('is-selected')));
 
                     const active = [...document.querySelectorAll('.genre-chip.is-selected')].map((chip) => chip.dataset.genre);
                     selectedGenreInput.value = active[0] || '';
+                    updateGenreStatus(new Set(active));
                 });
 
                 genreOptions.appendChild(button);
             });
+        }
+
+        function updateGenreStatus(selectedGenres) {
+            const count = selectedGenres.size;
+            document.getElementById('genre-selection-status').textContent = count === 0
+                ? 'Choisis jusqu’à 3 ambiances.'
+                : `${count} ambiance${count > 1 ? 's' : ''} sélectionnée${count > 1 ? 's' : ''}`;
         }
 
         const initialMood = document.querySelector('.mood-option.is-selected') || moodButtons[0];
@@ -212,6 +250,27 @@
                 selectMood(button);
             });
         });
+
+        function setIntensity(level) {
+            document.querySelectorAll('.mood-level').forEach((candidate) => {
+                const candidateLevel = Number(candidate.dataset.level);
+                const isSelected = candidateLevel === Number(level);
+                candidate.classList.toggle('is-selected', isSelected);
+                candidate.classList.toggle('is-filled', candidateLevel <= Number(level));
+                candidate.setAttribute('aria-pressed', String(isSelected));
+            });
+            intensityInput.value = level;
+            intensityValue.textContent = level + ' / 10';
+        }
+
+        document.querySelectorAll('.mood-level').forEach((levelButton) => {
+            levelButton.addEventListener('click', function () {
+                const level = levelButton.dataset.level;
+                setIntensity(level);
+            });
+        });
+
+        setIntensity(5);
 
         nextButton.addEventListener('click', function () {
             const selectedMoodButton = document.querySelector('.mood-option.is-selected');

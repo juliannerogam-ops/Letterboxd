@@ -15,23 +15,32 @@ class RecommendationController extends Controller
         $activeGenre = $request->string('genre')->toString();
         $genreAliases = $this->genreAliases();
         $activeAliases = $genreAliases[$activeGenre] ?? [];
+        $showAllFilms = $activeGenre === '' || $activeGenre === 'Tous';
+        $selectedMood = $showAllFilms ? null : $request->session()->get('preferred_mood');
+        $moodIntensity = $request->session()->get('mood_intensity');
+        $moodTitles = $request->session()->get('preferred_mood_titles', []);
 
         $films = Film::query()
-            ->when($activeGenre !== '' && $activeGenre !== 'Tous', function ($query) use ($activeAliases): void {
+            ->when(! $showAllFilms, function ($query) use ($activeAliases): void {
                 $query->where(function ($genreQuery) use ($activeAliases): void {
                     foreach ($activeAliases as $alias) {
                         $genreQuery->orWhere('genre', 'like', '%'.$alias.'%');
                     }
                 });
             })
-            ->orderByDesc('avis_count')
+            ->when(! $showAllFilms && $moodTitles !== [], function ($query) use ($moodTitles): void {
+                $query->orWhereIn('titre', $moodTitles);
+            })
+            ->orderBy($showAllFilms ? 'titre' : 'avis_count', $showAllFilms ? 'asc' : 'desc')
             ->orderBy('titre')
-            ->limit(13)
+            ->when(! $showAllFilms, fn ($query) => $query->limit(13))
             ->get();
 
         return view('recommendations.index', [
             'films' => $films,
             'activeGenre' => $activeGenre !== '' ? $activeGenre : 'Tous',
+            'selectedMood' => $selectedMood,
+            'moodIntensity' => $moodIntensity,
             'genres' => array_keys($genreAliases),
         ]);
     }
@@ -50,11 +59,13 @@ class RecommendationController extends Controller
         $validated = $request->validate([
             'genre' => ['required', 'string', 'regex:/^[^,]+$/', Rule::in($this->availableGenres())],
             'mood' => ['nullable', 'string', Rule::in(array_keys($this->moodGenres()))],
+            'intensity' => ['nullable', 'integer', 'between:1,10'],
         ]);
 
         $request->session()->put('preferred_genre', $validated['genre']);
         if (filled($validated['mood'] ?? null)) {
             $request->session()->put('preferred_mood', $validated['mood']);
+            $request->session()->put('mood_intensity', $validated['intensity'] ?? 5);
             $request->session()->put('preferred_genres', array_values(array_unique([
                 $validated['genre'],
                 ...$this->moodGenres()[$validated['mood']],
