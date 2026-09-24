@@ -26,7 +26,14 @@ class FilmController extends Controller
     public function show($id)
     {
         $film = Film::findOrFail($id);
-        $lists = auth()->check() ? auth()->user()->listes()->get() : collect();
+        $lists = auth()->check()
+            ? auth()->user()
+                ->listes()
+                ->whereDoesntHave('films', function ($query) use ($film) {
+                    $query->whereKey($film->id);
+                })
+                ->get()
+            : collect();
 
         return view('films.show', compact('film', 'lists'));
     }

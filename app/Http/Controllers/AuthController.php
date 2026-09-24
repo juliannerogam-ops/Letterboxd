@@ -51,7 +51,8 @@ class AuthController extends Controller
 
         $request->session()->regenerate();
 
-        return redirect()->intended(route('film.list'));
+        
+        return redirect()->route('recommendations.genre.create');
     }
 
     public function logout(Request $request)
