@@ -67,10 +67,29 @@ body:has(.sidebar-nav) {
 .sidebar-icon {
     display: inline-grid;
     width: 18px;
+    height: 18px;
     place-items: center;
     color: currentColor;
-    font-size: 1.05rem;
     line-height: 1;
+}
+
+.sidebar-icon svg {
+    display: block;
+    width: 18px;
+    height: 18px;
+    stroke: currentColor;
+    stroke-width: 1.8;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    fill: none;
+}
+
+.sidebar-icon svg path,
+.sidebar-icon svg circle,
+.sidebar-icon svg rect,
+.sidebar-icon svg polygon,
+.sidebar-icon svg ellipse {
+    vector-effect: non-scaling-stroke;
 }
 
 .sidebar-account {

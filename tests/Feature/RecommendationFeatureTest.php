@@ -32,9 +32,19 @@ class RecommendationFeatureTest extends TestCase
             ->get(route('recommendations.genre.create'))
             ->assertOk()
             ->assertSee('Aventure')
-            ->assertSee('Romance')
+            ->assertSee('Romantique')
             ->assertSee('Science-fiction')
             ->assertDontSee('Aventure, Romance');
+    }
+
+    public function test_mood_test_shows_a_confirmation_button(): void
+    {
+        $user = User::factory()->create();
+
+        $this->actingAs($user)
+            ->get(route('recommendations.genre.create'))
+            ->assertOk()
+            ->assertSee('Confirmer');
     }
 
     public function test_recommendations_find_a_genre_inside_a_film_genre_list(): void

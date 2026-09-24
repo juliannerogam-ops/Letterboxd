@@ -13,8 +13,9 @@ class RecommendationController extends Controller
     public function create(): View
     {
         $genres = $this->availableGenres();
+        $moods = $this->moodGenres();
 
-        return view('recommendations.genre', compact('genres'));
+        return view('recommendations.genre', compact('genres', 'moods'));
     }
 
     public function store(Request $request): RedirectResponse
@@ -41,9 +42,22 @@ class RecommendationController extends Controller
             'Family',
             'Crime',
             'Action',
+            'Adventure',
+            'Animation',
             'Western',
             'Sci-Fi',
             'Documentary',
+            'Mystery',
+            'Suspense',
+            'Romantique',
+            'Comédie',
+            'Horreur',
+            'Fantastique',
+            'Drame',
+            'Aventure',
+            'Émotion',
+            'Biopic',
+            'Science-fiction',
         ];
 
         $filmGenres = Film::query()
@@ -56,5 +70,20 @@ class RecommendationController extends Controller
             ->all();
 
         return array_values(array_unique([...$presetGenres, ...$filmGenres]));
+    }
+
+    private function moodGenres(): array
+    {
+        return [
+            'Heureuse' => ['Romantique', 'Comédie', 'Aventure'],
+            'Stressée' => ['Suspense', 'Horreur', 'Drame'],
+            'Triste' => ['Drame', 'Documentaire', 'Romantique'],
+            'Calme' => ['Documentaire', 'Animation', 'Drame'],
+            'Anxieuse' => ['Thriller', 'Science-fiction', 'Horreur'],
+            'Énervée' => ['Action', 'Suspense', 'Comédie'],
+            'Fatiguée' => ['Animation', 'Comédie', 'Documentaire'],
+            'Neutre' => ['Drame', 'Comédie', 'Documentaire'],
+            'Ne sais pas trop' => ['Fantastique', 'Aventure', 'Animation'],
+        ];
     }
 }

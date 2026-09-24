@@ -25,6 +25,33 @@ class ListeFeatureTest extends TestCase
         );
     }
 
+    public function test_dashboard_creates_a_top_five_when_missing(): void
+    {
+        $user = User::factory()->create();
+        $genre = 'Science-fiction';
+
+        foreach (range(1, 7) as $index) {
+            Film::create([
+                'tmdb_id' => 1000 + $index,
+                'titre' => 'Film ' . $index,
+                'genre' => $genre,
+            ]);
+        }
+
+        $this->actingAs($user)
+            ->withSession(['preferred_genre' => $genre])
+            ->get(route('dashboard'))
+            ->assertOk();
+
+        $topFive = $user->listes()->where('type', Liste::TYPE_TOP_FIVE)->firstOrFail();
+
+        $this->assertGreaterThanOrEqual(1, $topFive->films()->count());
+        $this->assertDatabaseHas('listes', [
+            'user_id' => $user->id,
+            'type' => Liste::TYPE_TOP_FIVE,
+        ]);
+    }
+
     public function test_authenticated_user_can_create_a_list_and_add_a_film(): void
     {
         $user = User::factory()->create();

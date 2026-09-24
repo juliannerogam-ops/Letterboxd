@@ -38,6 +38,42 @@ class DashboardController extends Controller
             ->with('films')
             ->first();
 
+        if (! $topFive) {
+            $topFive = $request->user()->listes()->create([
+                'titre' => 'Mon top 5',
+                'type' => Liste::TYPE_TOP_FIVE,
+            ]);
+        }
+
+        if ($topFive->films()->count() < 5) {
+            $defaultTopFive = Film::query()
+                ->where('genre', 'like', '%' . $genre . '%')
+                ->whereNotIn('id', $topFive->films()->pluck('film.id'))
+                ->orderBy('titre')
+                ->limit(5)
+                ->get();
+
+            if ($defaultTopFive->count() < 5) {
+                $fallbackTopFive = Film::query()
+                    ->whereNotIn('id', $topFive->films()->pluck('film.id'))
+                    ->orderBy('titre')
+                    ->limit(5 - $defaultTopFive->count())
+                    ->get();
+
+                $defaultTopFive = $defaultTopFive->merge($fallbackTopFive)->unique('id')->take(5);
+            }
+
+            if ($defaultTopFive->isNotEmpty()) {
+                $topFive->films()->syncWithoutDetaching(
+                    $defaultTopFive->mapWithKeys(fn (Film $film, int $index) => [
+                        $film->id => ['position' => $index + 1],
+                    ])->all(),
+                );
+            }
+        }
+
+        $topFive->load('films');
+
         $recommendations = Film::query()
             ->where('genre', 'like', '%' . $genre . '%')
             ->whereNotIn('id', $watchlistFilms->pluck('id'))
