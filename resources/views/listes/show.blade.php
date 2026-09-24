@@ -66,17 +66,23 @@
         @else
             <div class="list-film-grid">
                 @foreach ($liste->films->sortBy(fn ($film) => $film->pivot->position ?? 99) as $film)
-                    <a class="list-film-card" href="{{ route('film.show', ['id' => $film->id]) }}">
-                        <div class="list-film-rank">#{{ $film->pivot->position ?? $loop->iteration }}</div>
-                        @if ($film->hasVerifiedPoster())
-                            <img src="{{ $film->affiche_url }}" alt="Affiche de {{ $film->titre }}" onerror="this.classList.add('is-broken'); this.nextElementSibling.classList.add('is-visible')">
-                            <div class="list-film-placeholder poster-fallback" aria-hidden="true"></div>
-                        @else
-                            <div class="list-film-placeholder" aria-hidden="true"></div>
+                    <div class="list-film-entry">
+                        <a class="list-film-card" href="{{ route('film.show', ['id' => $film->id]) }}">
+                            <div class="list-film-rank">#{{ $film->pivot->position ?? $loop->iteration }}</div>
+                            @if ($film->hasVerifiedPoster())
+                                <img src="{{ $film->affiche_url }}" alt="Affiche de {{ $film->titre }}">
+                            @endif
+                            <strong>{{ $film->titre }}</strong>
+                            <span>{{ $film->genre ?? 'Film' }}</span>
+                        </a>
+                        @if ($liste->type === \App\Models\Liste::TYPE_WATCHLIST)
+                            <form method="POST" action="{{ route('listes.films.destroy', [$liste, $film]) }}" onsubmit="return confirm('Retirer ce film de la watchlist ?')">
+                                @csrf
+                                @method('DELETE')
+                                <button class="list-film-remove" type="submit">Retirer</button>
+                            </form>
                         @endif
-                        <strong>{{ $film->titre }}</strong>
-                        <span>{{ $film->genre ?? 'Film' }}</span>
-                    </a>
+                    </div>
                 @endforeach
             </div>
         @endif
@@ -103,10 +109,7 @@
                 @foreach ($discoverFilms as $film)
                     <a class="list-discover-card" href="{{ route('film.show', ['id' => $film->id]) }}">
                         @if ($film->hasVerifiedPoster())
-                            <img src="{{ $film->affiche_url }}" alt="Affiche de {{ $film->titre }}" onerror="this.classList.add('is-broken'); this.nextElementSibling.classList.add('is-visible')">
-                            <span class="list-discover-placeholder poster-fallback" aria-hidden="true"></span>
-                        @else
-                            <span class="list-discover-placeholder" aria-hidden="true"></span>
+                            <img src="{{ $film->affiche_url }}" alt="Affiche de {{ $film->titre }}">
                         @endif
                         <span>
                             <strong>{{ $film->titre }}</strong>

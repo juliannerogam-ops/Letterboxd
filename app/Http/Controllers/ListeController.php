@@ -5,8 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\Film;
 use App\Models\Liste;
 use Illuminate\Contracts\View\View;
-use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
 class ListeController extends Controller
@@ -21,8 +21,8 @@ class ListeController extends Controller
             ->when($search !== '', function ($query) use ($search) {
                 $query->where(function ($query) use ($search) {
                     $query
-                        ->where('titre', 'like', '%' . $search . '%')
-                        ->orWhere('description', 'like', '%' . $search . '%');
+                        ->where('titre', 'like', '%'.$search.'%')
+                        ->orWhere('description', 'like', '%'.$search.'%');
                 });
             })
             ->latest()
@@ -90,5 +90,15 @@ class ListeController extends Controller
         }
 
         return redirect()->route('listes.show', $liste);
+    }
+
+    public function removeFilm(Request $request, Liste $liste, Film $film): RedirectResponse
+    {
+        abort_unless($liste->user_id === $request->user()->id, 403);
+
+        $liste->films()->detach($film->id);
+
+        return redirect()->route('listes.show', $liste)
+            ->with('status', 'Film retiré de la liste.');
     }
 }

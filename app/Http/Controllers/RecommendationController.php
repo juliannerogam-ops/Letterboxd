@@ -79,6 +79,19 @@ class RecommendationController extends Controller
         return redirect()->route('dashboard');
     }
 
+    public function resetMood(Request $request): RedirectResponse
+    {
+        $request->session()->forget([
+            'preferred_genre',
+            'preferred_genres',
+            'preferred_mood',
+            'mood_intensity',
+            'preferred_mood_titles',
+        ]);
+
+        return redirect()->route('dashboard');
+    }
+
     private function availableGenres(): array
     {
         $presetGenres = [

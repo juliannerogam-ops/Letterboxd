@@ -69,6 +69,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/listes', [ListeController::class, 'store'])->name('listes.store');
     Route::get('/listes/{liste}', [ListeController::class, 'show'])->name('listes.show');
     Route::post('/listes/{liste}/films', [ListeController::class, 'addFilm'])->name('listes.films.store');
+    Route::delete('/listes/{liste}/films/{film}', [ListeController::class, 'removeFilm'])->name('listes.films.destroy');
 });
 
 Route::middleware('auth')->group(function () {
@@ -80,4 +81,6 @@ Route::middleware('auth')->group(function () {
 
     Route::post('/preferences/genre', [RecommendationController::class, 'store'])
         ->name('recommendations.genre.store');
+    Route::post('/preferences/reset', [RecommendationController::class, 'resetMood'])
+        ->name('recommendations.reset');
 });

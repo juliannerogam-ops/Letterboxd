@@ -14,6 +14,29 @@ class RecommendationFeatureTest extends TestCase
 {
     use RefreshDatabase;
 
+    public function test_clicking_the_logo_resets_the_mood_and_returns_home(): void
+    {
+        $user = User::factory()->create();
+
+        $this->actingAs($user)
+            ->withSession([
+                'preferred_genre' => 'Horreur',
+                'preferred_genres' => ['Horreur'],
+                'preferred_mood' => 'Stressée',
+                'mood_intensity' => 8,
+                'preferred_mood_titles' => ['Scream'],
+            ])
+            ->post(route('recommendations.reset'))
+            ->assertRedirect(route('dashboard'))
+            ->assertSessionMissing([
+                'preferred_genre',
+                'preferred_genres',
+                'preferred_mood',
+                'mood_intensity',
+                'preferred_mood_titles',
+            ]);
+    }
+
     public function test_genre_selection_uses_individual_genres_from_film_data(): void
     {
         $user = User::factory()->create();

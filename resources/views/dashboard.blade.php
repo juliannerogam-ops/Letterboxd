@@ -33,13 +33,13 @@
 
     <section class="movie-picker">
         <div class="section-title-row">
-            <h2>Envie de regarder un film ?</h2>
+            <h2>Les blockbusters de l'été 2026</h2>
             <a href="{{ route('recommendations.index') }}">Voir tout</a>
         </div>
 
         <div class="film-row">
             @php
-                $featuredFilms = $recommendations->take(4);
+                $featuredFilms = $summerBlockbusters;
             @endphp
 
             @forelse ($featuredFilms as $film)

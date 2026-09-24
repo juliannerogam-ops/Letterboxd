@@ -1,10 +1,17 @@
 @vite('resources/css/navbar.css')
 
 <nav class="sidebar-nav" aria-label="Navigation principale">
-    <a href="{{ route('dashboard') }}" class="sidebar-brand">
-        <span class="brand-mark" aria-hidden="true"></span>
-        <span>Your Letterboxd</span>
-    </a>
+    <form method="POST" action="{{ route('recommendations.reset') }}" class="sidebar-brand-form">
+        @csrf
+        <button type="submit" class="sidebar-brand" aria-label="Revenir à l'accueil et réinitialiser le mood">
+            <span class="brand-mark" aria-hidden="true">
+                <span></span>
+                <span></span>
+                <span></span>
+            </span>
+            <span>Your Letterboxd</span>
+        </button>
+    </form>
 
     @auth
         <div class="sidebar-links">

@@ -8,6 +8,7 @@ use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Str;
 
 class DashboardController extends Controller
 {
@@ -103,6 +104,16 @@ class DashboardController extends Controller
             })
             ->values();
 
+        $summerBlockbusters = Film::query()
+            ->whereBetween('date_sortie', ['2026-07-01', '2026-08-31'])
+            ->orderByDesc('avis_count')
+            ->orderByDesc('date_sortie')
+            ->orderBy('titre')
+            ->get()
+            ->unique(fn (Film $film): string => $this->normalizeTitle($film->titre))
+            ->take(4)
+            ->values();
+
         $releaseFilms = Film::query()
             ->whereNotNull('date_sortie')
             ->whereYear('date_sortie', 2026)
@@ -123,6 +134,7 @@ class DashboardController extends Controller
             'mood',
             'watchlistFilms',
             'recommendations',
+            'summerBlockbusters',
             'topFive',
             'releaseFilms'
         ));
@@ -138,5 +150,14 @@ class DashboardController extends Controller
         $watchlist->films()->syncWithoutDetaching([$film->id]);
 
         return back()->with('status', 'Film ajouté à votre watchlist.');
+    }
+
+    private function normalizeTitle(string $title): string
+    {
+        return (string) Str::of($title)
+            ->ascii()
+            ->lower()
+            ->replaceMatches('/[^a-z0-9]+/', ' ')
+            ->squish();
     }
 }

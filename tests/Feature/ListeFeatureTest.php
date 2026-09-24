@@ -32,7 +32,7 @@ class ListeFeatureTest extends TestCase
         foreach (range(1, 7) as $index) {
             Film::create([
                 'tmdb_id' => 2000 + $index,
-                'titre' => 'Film default ' . $index,
+                'titre' => 'Film default '.$index,
                 'genre' => 'Action',
             ]);
         }
@@ -52,7 +52,7 @@ class ListeFeatureTest extends TestCase
         foreach (range(1, 7) as $index) {
             Film::create([
                 'tmdb_id' => 1000 + $index,
-                'titre' => 'Film ' . $index,
+                'titre' => 'Film '.$index,
                 'genre' => $genre,
             ]);
         }
@@ -156,7 +156,7 @@ class ListeFeatureTest extends TestCase
         ]);
         $films = collect(range(1, 6))->map(fn (int $tmdbId) => Film::create([
             'tmdb_id' => $tmdbId,
-            'titre' => 'Film ' . $tmdbId,
+            'titre' => 'Film '.$tmdbId,
         ]));
 
         foreach ($films->take(5) as $index => $film) {
@@ -230,7 +230,28 @@ class ListeFeatureTest extends TestCase
                     && ! $lists->contains($existingList);
             });
     }
+
+    public function test_user_can_remove_a_film_from_the_watchlist(): void
+    {
+        $user = User::factory()->create();
+        $watchlist = $user->listes()->create([
+            'titre' => 'Watchlist',
+            'type' => Liste::TYPE_WATCHLIST,
+        ]);
+        $film = Film::create([
+            'tmdb_id' => 999,
+            'titre' => 'Film à retirer',
+            'date_sortie' => '2026-09-24',
+        ]);
+        $watchlist->films()->attach($film);
+
+        $this->actingAs($user)
+            ->delete(route('listes.films.destroy', [$watchlist, $film]))
+            ->assertRedirect(route('listes.show', $watchlist));
+
+        $this->assertDatabaseMissing('film_liste', [
+            'liste_id' => $watchlist->id,
+            'film_id' => $film->id,
+        ]);
+    }
 }
-
-
-
