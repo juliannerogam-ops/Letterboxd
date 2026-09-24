@@ -77,6 +77,19 @@ class ListeFeatureTest extends TestCase
             'name' => 'Durand', 'first_name' => 'Camille', 'pseudo' => 'camille-durand',
             'email' => 'camille@example.com', 'password' => 'new-password',
             'password_confirmation' => 'new-password',
+        ])->assertSessionHasErrors('current_password');
+
+        $this->actingAs($user)->put(route('profile.update'), [
+            'name' => 'Durand', 'first_name' => 'Camille', 'pseudo' => 'camille-durand',
+            'email' => 'camille@example.com', 'current_password' => 'wrong-password',
+            'password' => 'new-password', 'password_confirmation' => 'new-password',
+        ])->assertSessionHasErrors('current_password');
+
+        $this->actingAs($user)->put(route('profile.update'), [
+            'name' => 'Durand', 'first_name' => 'Camille', 'pseudo' => 'camille-durand',
+            'email' => 'camille@example.com', 'current_password' => 'password',
+            'password' => 'new-password',
+            'password_confirmation' => 'new-password',
         ])->assertRedirect(route('profile'));
 
         $this->assertTrue(Hash::check('new-password', $user->refresh()->password));

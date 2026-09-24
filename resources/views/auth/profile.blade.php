@@ -50,6 +50,13 @@
                 </div>
 
                 <div class="form-group">
+                    <label for="current_password">Votre mot de passe actuel</label>
+                    <input type="password" name="current_password" id="current_password" class="field" autocomplete="current-password">
+                    <p class="password-help">Obligatoire uniquement si vous modifiez votre mot de passe.</p>
+                    @error('current_password') <div class="error-text">{{ $message }}</div> @enderror
+                </div>
+
+                <div class="form-group">
                     <label for="password">Nouveau mot de passe</label>
                     <input type="password" name="password" id="password" class="field" autocomplete="new-password">
                     <p class="password-help">Laissez ce champ vide pour conserver votre mot de passe actuel.</p>

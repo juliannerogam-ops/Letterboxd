@@ -50,6 +50,7 @@ class AuthController extends Controller
             'first_name' => ['required', 'string', 'max:255'],
             'pseudo' => ['required', 'string', 'max:255', Rule::unique('users', 'pseudo')->ignore($user)],
             'email' => ['required', 'email', Rule::unique('users', 'email')->ignore($user)],
+            'current_password' => ['nullable', 'required_with:password', 'current_password'],
             'password' => ['nullable', 'confirmed', 'min:8'],
         ]);
 
@@ -57,6 +58,7 @@ class AuthController extends Controller
             unset($validated['password']);
         }
 
+    unset($validated['current_password']);
         unset($validated['password_confirmation']);
         $user->update($validated);
 
