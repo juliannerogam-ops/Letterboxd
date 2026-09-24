@@ -61,6 +61,10 @@ Route::get('/dashboard', [DashboardController::class, 'index'])
     ->middleware('auth')
     ->name('dashboard');
 
+Route::post('/dashboard/watchlist/{film}', [DashboardController::class, 'addToWatchlist'])
+    ->middleware('auth')
+    ->name('dashboard.watchlist.store');
+
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [AuthController::class, 'showProfile'])->name('profile');
     Route::put('/profile', [AuthController::class, 'updateProfile'])->name('profile.update');

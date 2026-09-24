@@ -30,6 +30,7 @@ class DashboardController extends Controller
             ->first();
 
         $watchlistFilms = $watchlist?->films ?? collect();
+        $watchlistFilmIds = $watchlist?->films()->pluck('film.id')->all() ?? [];
 
         $topFive = $request->user()
             ->listes()
@@ -52,6 +53,8 @@ class DashboardController extends Controller
                 'date' => Carbon::parse($film->date_sortie)->toDateString(),
                 'title' => $film->titre,
                 'url' => route('film.show', ['id' => $film->id]),
+                'watchlistUrl' => route('dashboard.watchlist.store', ['film' => $film->id]),
+                'inWatchlist' => in_array($film->id, $watchlistFilmIds, true),
             ])
             ->values();
 
@@ -62,5 +65,17 @@ class DashboardController extends Controller
             'topFive',
             'releaseFilms'
         ));
+    }
+
+    public function addToWatchlist(Request $request, Film $film): RedirectResponse
+    {
+        $watchlist = $request->user()->listes()->firstOrCreate(
+            ['type' => Liste::TYPE_WATCHLIST],
+            ['titre' => 'Watchlist'],
+        );
+
+        $watchlist->films()->syncWithoutDetaching([$film->id]);
+
+        return back()->with('status', 'Film ajouté à votre watchlist.');
     }
 }

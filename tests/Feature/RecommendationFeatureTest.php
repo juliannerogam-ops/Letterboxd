@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Models\Film;
+use App\Models\Liste;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -85,5 +86,25 @@ class RecommendationFeatureTest extends TestCase
                 return $releaseFilms->contains(fn (array $releaseFilm): bool => $releaseFilm['title'] === $film->titre
                     && $releaseFilm['date'] === '2026-09-24');
             });
+    }
+
+    public function test_user_can_add_a_calendar_film_to_the_watchlist(): void
+    {
+        $user = User::factory()->create();
+        Liste::createDefaultsFor($user);
+        $film = Film::create([
+            'tmdb_id' => 6,
+            'titre' => 'Film à ajouter',
+            'date_sortie' => '2026-09-24',
+        ]);
+
+        $this->actingAs($user)
+            ->post(route('dashboard.watchlist.store', ['film' => $film]))
+            ->assertRedirect();
+
+        $this->assertDatabaseHas('film_liste', [
+            'liste_id' => $user->listes()->where('type', Liste::TYPE_WATCHLIST)->value('id'),
+            'film_id' => $film->id,
+        ]);
     }
 }
