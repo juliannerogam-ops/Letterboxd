@@ -107,8 +107,38 @@ body:has(.sidebar-nav) {
 
 .sidebar-link:hover,
 .sidebar-link.is-active {
-    background: #f9d9ed;
-    color: #ef3298;
+    background: #f5bfd7;
+    color: #a3315b;
+}
+
+.sidebar-link:nth-of-type(2):hover,
+.sidebar-link:nth-of-type(2).is-active {
+    background: #b9dffd;
+    color: #1f6ba0;
+}
+
+.sidebar-link:nth-of-type(3):hover,
+.sidebar-link:nth-of-type(3).is-active {
+    background: #f4df9a;
+    color: #8a6a12;
+}
+
+.sidebar-link:nth-of-type(4):hover,
+.sidebar-link:nth-of-type(4).is-active {
+    background: #bee9d0;
+    color: #2c7a4f;
+}
+
+.sidebar-link:nth-of-type(5):hover,
+.sidebar-link:nth-of-type(5).is-active {
+    background: #d9d4f8;
+    color: #6a4fb5;
+}
+
+.sidebar-link:nth-of-type(6):hover,
+.sidebar-link:nth-of-type(6).is-active {
+    background: #eef2f6;
+    color: #4a5568;
 }
 
 .sidebar-icon {
