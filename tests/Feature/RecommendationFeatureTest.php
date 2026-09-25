@@ -223,7 +223,7 @@ class RecommendationFeatureTest extends TestCase
             });
     }
 
-    public function test_happy_mood_loads_at_least_ten_compatible_recommendations(): void
+    public function test_happy_mood_loads_compatible_recommendations_excluding_watchlist_films(): void
     {
         $user = User::factory()->create();
 
@@ -242,11 +242,18 @@ class RecommendationFeatureTest extends TestCase
             ])
             ->assertRedirect(route('dashboard'));
 
+        $watchlistFilmIds = $user->listes()
+            ->where('type', Liste::TYPE_WATCHLIST)
+            ->first()
+            ->films()
+            ->pluck('film.id');
+
         $this->actingAs($user)
             ->get(route('dashboard'))
-            ->assertViewHas('recommendations', function ($recommendations): bool {
-                return $recommendations->count() >= 10
-                    && $recommendations->every(fn (Film $film): bool => str_contains($film->genre, 'Aventure'));
+            ->assertViewHas('recommendations', function ($recommendations) use ($watchlistFilmIds): bool {
+                return $recommendations->isNotEmpty()
+                    && $recommendations->every(fn (Film $film): bool => str_contains($film->genre, 'Aventure'))
+                    && $recommendations->every(fn (Film $film) => ! $watchlistFilmIds->contains($film->id));
             });
     }
 

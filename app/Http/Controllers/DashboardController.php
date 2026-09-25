@@ -100,13 +100,14 @@ class DashboardController extends Controller
 
         if ($mood) {
             $recommendations = Film::query()
-                ->where(function ($query) use ($preferredMoodGenres): void {
+                ->where(function ($query) use ($preferredMoodGenres, $preferredMoodTitles): void {
                     foreach ($preferredMoodGenres as $preferredMoodGenre) {
                         $query->orWhere('genre', 'like', '%'.$preferredMoodGenre.'%');
                     }
-                })
-                ->when($preferredMoodTitles !== [], function ($query) use ($preferredMoodTitles): void {
-                    $query->orWhereIn('titre', $preferredMoodTitles);
+
+                    if ($preferredMoodTitles !== []) {
+                        $query->orWhereIn('titre', $preferredMoodTitles);
+                    }
                 })
                 ->whereNotIn('id', $watchlistFilmIds)
                 ->orderByRaw('CASE WHEN genre LIKE ? THEN 0 ELSE 1 END', ['%'.$genre.'%'])
