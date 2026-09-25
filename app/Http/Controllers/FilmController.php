@@ -29,9 +29,9 @@ class FilmController extends Controller
         $lists = auth()->check()
             ? auth()->user()
                 ->listes()
-                ->whereDoesntHave('films', function ($query) use ($film) {
+                ->with(['films' => function ($query) use ($film): void {
                     $query->whereKey($film->id);
-                })
+                }])
                 ->get()
             : collect();
 

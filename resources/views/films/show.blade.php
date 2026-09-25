@@ -58,12 +58,29 @@
 						@csrf
 						<label for="liste_id">Ajouter à une liste</label>
 						<div>
-							<select id="liste_id" required onchange="this.form.action = '{{ url('/listes') }}/' + this.value + '/films'">
+							<select id="liste_id" required>
 								<option value="">Choisir une liste</option>
 								@foreach ($lists as $list)
-									<option value="{{ $list->id }}">{{ $list->titre }}</option>
+									<option
+										value="{{ $list->id }}"
+										data-action="{{ route('listes.films.store', $list) }}"
+										data-top-five="{{ $list->isTopFive() ? 'true' : 'false' }}"
+											@if ($list->films->isNotEmpty()) disabled @endif
+									>
+										{{ $list->titre }}
+											@if ($list->films->isNotEmpty()) (Déjà ajouté) @endif
+									</option>
 								@endforeach
 							</select>
+							<label class="film-list-rank" for="position" hidden>
+								<span>Rang dans le Top 5</span>
+								<select id="position" name="position" disabled>
+									<option value="">Choisir</option>
+									@for ($position = 1; $position <= 5; $position++)
+										<option value="{{ $position }}">#{{ $position }}</option>
+									@endfor
+								</select>
+							</label>
 							<input type="hidden" name="film_id" value="{{ $film->id }}">
 							<button type="submit">Ajouter</button>
 						</div>
@@ -79,3 +96,27 @@
 		<p>{{ $film->description ?: 'Aucun synopsis disponible pour le moment.' }}</p>
 	</section>
 </main>
+
+<script>
+	const listForm = document.querySelector('.film-list-form');
+	const listSelect = document.querySelector('#liste_id');
+	const rankField = document.querySelector('.film-list-rank');
+	const rankSelect = document.querySelector('#position');
+
+	listSelect?.addEventListener('change', () => {
+		const selectedOption = listSelect.options[listSelect.selectedIndex];
+		const isTopFive = selectedOption?.dataset.topFive === 'true';
+
+		if (selectedOption?.dataset.action) {
+			listForm.action = selectedOption.dataset.action;
+		}
+
+		rankField.hidden = !isTopFive;
+		rankSelect.disabled = !isTopFive;
+		rankSelect.required = isTopFive;
+
+		if (!isTopFive) {
+			rankSelect.value = '';
+		}
+	});
+</script>

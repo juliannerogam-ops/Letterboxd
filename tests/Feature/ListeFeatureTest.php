@@ -201,7 +201,7 @@ class ListeFeatureTest extends TestCase
         ]);
     }
 
-    public function test_film_page_hides_lists_that_already_contain_the_film(): void
+    public function test_film_page_marks_lists_that_already_contain_the_film(): void
     {
         $user = User::factory()->create();
         $film = Film::create([
@@ -224,10 +224,13 @@ class ListeFeatureTest extends TestCase
 
         $response
             ->assertOk()
-            ->assertSee('Retour à la page précédente')
-            ->assertViewHas('lists', function ($lists) use ($existingList, $availableList) {
+            ->assertSee('Retour aux films')
+            ->assertViewHas('lists', function ($lists) use ($film, $existingList, $availableList) {
+                $loadedExistingList = $lists->firstWhere('id', $existingList->id);
+
                 return $lists->contains($availableList)
-                    && ! $lists->contains($existingList);
+                    && $lists->contains($existingList)
+                    && $loadedExistingList->films->contains('id', $film->id);
             });
     }
 

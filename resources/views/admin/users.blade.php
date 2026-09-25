@@ -1,43 +1,53 @@
 @include('components.navbar')
+@vite('resources/css/admin.css')
 
-<main>
-    <a href="{{ route('admin.index') }}">Retour à l'administration</a>
-    <h1>Liste des utilisateurs</h1>
+<main class="admin-users-page">
+    <a class="admin-users-back" href="{{ route('admin.index') }}"><span aria-hidden="true">←</span> Administration</a>
+    <header class="admin-users-header">
+        <div>
+            <span class="admin-card-kicker">Accès & permissions</span>
+            <h1>Liste des utilisateurs</h1>
+            <p>Gère les rôles et garde une vue claire sur les membres de la communauté.</p>
+        </div>
+        <strong class="admin-users-count">{{ $users->count() }} <span>{{ $users->count() > 1 ? 'membres' : 'membre' }}</span></strong>
+    </header>
 
     @if (session('status'))
-        <p>{{ session('status') }}</p>
+        <p class="admin-users-notice" role="status">{{ session('status') }}</p>
     @endif
 
-    <table>
-        <thead>
-            <tr>
-                <th>Nom</th>
-                <th>Pseudo</th>
-                <th>E-mail</th>
-                <th>Rôle</th>
-                <th>Action</th>
-            </tr>
-        </thead>
-        <tbody>
+    <section class="admin-users-table-wrap" aria-label="Utilisateurs enregistrés">
+        <div class="admin-users-table-head">
+            <span>Profil</span>
+            <span>Contact</span>
+            <span>Accès</span>
+            <span>Action</span>
+        </div>
+        <div class="admin-users-list">
             @foreach ($users as $user)
-                <tr>
-                    <td>{{ $user->name }} {{ $user->first_name }}</td>
-                    <td>{{ $user->pseudo }}</td>
-                    <td>{{ $user->email }}</td>
-                    <td>{{ $user->is_admin ? 'Admin' : 'Utilisateur' }}</td>
-                    <td>
+                <article class="admin-user-row">
+                    <div class="admin-user-profile">
+                        <span class="admin-user-avatar">{{ strtoupper(substr($user->pseudo ?: $user->name, 0, 1)) }}</span>
+                        <div>
+                            <strong>{{ $user->name }} {{ $user->first_name }}</strong>
+                            <span>@{{ $user->pseudo ?: 'membre' }}</span>
+                        </div>
+                    </div>
+                    <span class="admin-user-email">{{ $user->email }}</span>
+                    <span class="admin-user-role {{ $user->is_admin ? 'is-admin' : '' }}">{{ $user->is_admin ? 'Admin' : 'Utilisateur' }}</span>
+                    <div class="admin-user-action">
                         @if (! $user->is_admin)
                             <form method="POST" action="{{ route('admin.users.promote', $user) }}">
                                 @csrf
                                 @method('PATCH')
-                                <button type="submit">Nommer admin</button>
+                                <button type="submit">Nommer admin <span aria-hidden="true">→</span></button>
                             </form>
                         @else
-                            Déjà admin
+                            <span class="admin-user-confirmed">Accès complet</span>
                         @endif
-                    </td>
-                </tr>
+                    </div>
+                </article>
             @endforeach
-        </tbody>
-    </table>
+        </div>
+    </section>
 </main>
