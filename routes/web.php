@@ -31,6 +31,10 @@ Route::prefix('film')->name('film.')->group(function () {
     Route::get('/{id}/delete', [FilmController::class, 'delete'])->name('delete');
 });
 
+Route::get('/recherche-films', [FilmController::class, 'search'])
+    ->middleware('auth')
+    ->name('films.search');
+
 Route::middleware('guest')->group(function () {
     Route::get('/register', [AuthController::class, 'showRegister'])
         ->name('register');

@@ -76,7 +76,7 @@ class RecommendationFeatureTest extends TestCase
     {
         $user = User::factory()->create();
 
-        Film::create([
+        $film = Film::create([
             'tmdb_id' => 7,
             'titre' => 'Little Miss Sunshine',
             'genre' => 'Comédie',
@@ -94,7 +94,71 @@ class RecommendationFeatureTest extends TestCase
             ->assertSee('Little Miss Sunshine')
             ->assertSee('3.8')
             ->assertSee('(128 avis)')
-            ->assertSee('18/08/2006');
+            ->assertSee('18/08/2006')
+            ->assertSee(route('film.show', ['id' => $film->id]), false);
+    }
+
+    public function test_see_all_keeps_the_selected_mood_and_genre_preferences(): void
+    {
+        $user = User::factory()->create();
+
+        $moodFilm = Film::create([
+            'tmdb_id' => 70,
+            'titre' => 'Film du mood',
+            'genre' => 'Suspense',
+        ]);
+
+        Film::create([
+            'tmdb_id' => 71,
+            'titre' => 'Film du genre choisi',
+            'genre' => 'Horreur',
+        ]);
+
+        Film::create([
+            'tmdb_id' => 72,
+            'titre' => 'Film hors sélection',
+            'genre' => 'Comédie',
+        ]);
+
+        $this->actingAs($user)
+            ->withSession([
+                'preferred_genre' => 'Horreur',
+                'preferred_genres' => ['Horreur', 'Suspense', 'Drame'],
+                'preferred_mood' => 'Stressée',
+                'mood_intensity' => 8,
+                'preferred_mood_titles' => [$moodFilm->titre],
+            ])
+            ->get(route('recommendations.index'))
+            ->assertOk()
+            ->assertViewHas('activeGenre', 'Horreur')
+            ->assertViewHas('selectedMood', 'Stressée')
+            ->assertSee('Film du mood')
+            ->assertSee('Film du genre choisi')
+            ->assertDontSee('Film hors sélection');
+    }
+
+    public function test_recommendations_include_all_films_matching_the_selected_mood_genres(): void
+    {
+        $user = User::factory()->create();
+
+        foreach (range(1, 14) as $filmNumber) {
+            Film::create([
+                'tmdb_id' => 200 + $filmNumber,
+                'titre' => 'Film suspense '.$filmNumber,
+                'genre' => 'Suspense',
+                'avis_count' => 14 - $filmNumber,
+            ]);
+        }
+
+        $this->actingAs($user)
+            ->withSession([
+                'preferred_genre' => 'Horreur',
+                'preferred_genres' => ['Horreur', 'Suspense', 'Drame'],
+                'preferred_mood' => 'Stressée',
+            ])
+            ->get(route('recommendations.index'))
+            ->assertOk()
+            ->assertViewHas('films', fn ($films): bool => $films->contains('titre', 'Film suspense 14'));
     }
 
     public function test_recommendation_results_do_not_repeat_titles_with_formatting_variations(): void

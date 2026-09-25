@@ -13,9 +13,18 @@ class RecommendationController extends Controller
 {
     public function index(Request $request): View
     {
-        $activeGenre = $request->string('genre')->toString();
+        $requestedGenre = $request->string('genre')->toString();
+        $sessionGenre = $request->session()->get('preferred_genre');
+        $activeGenre = $requestedGenre !== '' ? $requestedGenre : ($sessionGenre ?: 'Tous');
         $genreAliases = $this->genreAliases();
-        $activeAliases = $genreAliases[$activeGenre] ?? [];
+        $filterGenres = $requestedGenre !== ''
+            ? [$activeGenre]
+            : $request->session()->get('preferred_genres', [$activeGenre]);
+        $activeAliases = collect($filterGenres)
+            ->flatMap(fn (string $genre): array => $genreAliases[$genre] ?? [$genre])
+            ->unique()
+            ->values()
+            ->all();
         $showAllFilms = $activeGenre === '' || $activeGenre === 'Tous';
         $selectedMood = $showAllFilms ? null : $request->session()->get('preferred_mood');
         $moodIntensity = $request->session()->get('mood_intensity');
@@ -34,7 +43,6 @@ class RecommendationController extends Controller
             })
             ->orderBy($showAllFilms ? 'titre' : 'avis_count', $showAllFilms ? 'asc' : 'desc')
             ->orderBy('titre')
-            ->when(! $showAllFilms, fn ($query) => $query->limit(13))
             ->get()
             ->unique(fn (Film $film): string => $this->normalizeTitle($film->titre))
             ->values();

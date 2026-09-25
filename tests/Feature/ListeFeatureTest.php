@@ -44,6 +44,21 @@ class ListeFeatureTest extends TestCase
         $this->assertSame('Action', session('preferred_genre') ?? 'Action');
     }
 
+    public function test_dashboard_places_recommendations_before_blockbusters_after_mood_selection(): void
+    {
+        $user = User::factory()->create();
+
+        $response = $this->actingAs($user)
+            ->withSession([
+                'preferred_mood' => 'Calme',
+                'preferred_genre' => 'Drame',
+            ])
+            ->get(route('dashboard'));
+
+        $response->assertOk();
+        $response->assertSee('mood-dashboard has-selected-mood', false);
+    }
+
     public function test_dashboard_creates_a_top_five_when_missing(): void
     {
         $user = User::factory()->create();

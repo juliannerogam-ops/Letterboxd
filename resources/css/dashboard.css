@@ -13,6 +13,31 @@ body:has(.mood-dashboard) {
     box-sizing: border-box;
 }
 
+.mood-dashboard.has-selected-mood {
+    display: flex;
+    flex-direction: column;
+}
+
+.mood-dashboard.has-selected-mood .dashboard-topbar {
+    order: 1;
+}
+
+.mood-dashboard.has-selected-mood .mood-hero {
+    order: 2;
+}
+
+.mood-dashboard.has-selected-mood .recommendation-block {
+    order: 3;
+}
+
+.mood-dashboard.has-selected-mood .movie-picker {
+    order: 4;
+}
+
+.mood-dashboard.has-selected-mood .activity-grid-shell {
+    order: 5;
+}
+
 .dashboard-topbar {
     display: flex;
     align-items: center;

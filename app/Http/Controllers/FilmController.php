@@ -2,8 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Services\TmdbService;
 use App\Models\Film;
+use App\Services\TmdbService;
+use Illuminate\Contracts\View\View;
 use Illuminate\Http\Client\RequestException;
 use Illuminate\Http\Request;
 use RuntimeException;
@@ -16,11 +17,25 @@ class FilmController extends Controller
 
         $films = Film::query()
             ->when($search !== '', function ($query) use ($search) {
-                $query->where('titre', 'like', '%' . $search . '%');
+                $query->where('titre', 'like', '%'.$search.'%');
             })
             ->get();
 
         return view('films.all', compact('films', 'search'));
+    }
+
+    public function search(Request $request): View
+    {
+        $search = $request->string('q')->trim()->toString();
+
+        $films = Film::query()
+            ->when($search !== '', function ($query) use ($search): void {
+                $query->where('titre', 'like', '%'.$search.'%');
+            })
+            ->orderBy('titre')
+            ->get();
+
+        return view('films.search', compact('films', 'search'));
     }
 
     public function show($id)
@@ -50,7 +65,7 @@ class FilmController extends Controller
         ]);
 
         if (! preg_match('~themoviedb\.org/movie/(\d+)~', $validated['url'], $matches)) {
-            return back()->withErrors(['url' => "Lien TMDb invalide. Utilise un lien de type https://www.themoviedb.org/movie/550."]);
+            return back()->withErrors(['url' => 'Lien TMDb invalide. Utilise un lien de type https://www.themoviedb.org/movie/550.']);
         }
 
         $tmdbId = (int) $matches[1];
@@ -110,7 +125,7 @@ class FilmController extends Controller
     {
         $film = Film::findOrFail($id);
         $film->update($request->validate([
-            'tmdb_id' => ['required', 'integer', 'unique:film,tmdb_id,' . $film->id],
+            'tmdb_id' => ['required', 'integer', 'unique:film,tmdb_id,'.$film->id],
             'titre' => ['required', 'string', 'max:255'],
             'genre' => ['nullable', 'string', 'max:255'],
             'description' => ['nullable', 'string'],
@@ -124,6 +139,7 @@ class FilmController extends Controller
             'realisateur' => ['nullable', 'string', 'max:255'],
             'est_sorti' => ['nullable', 'boolean'],
         ]));
+
         return redirect()->route('film.list');
     }
 }
