@@ -97,6 +97,11 @@ body:has(.recommendation-results) {
     color: #fff;
 }
 
+.recommendation-filter.is-mood-active {
+    background: #cbd2dc;
+    color: #3f4d60;
+}
+
 .recommendation-results-grid {
     display: grid;
     grid-template-columns: repeat(4, minmax(0, 1fr));

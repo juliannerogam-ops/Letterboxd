@@ -131,6 +131,7 @@ class DashboardController extends Controller
 
         return view('dashboard', compact(
             'genre',
+            'preferredGenres',
             'mood',
             'watchlistFilms',
             'recommendations',

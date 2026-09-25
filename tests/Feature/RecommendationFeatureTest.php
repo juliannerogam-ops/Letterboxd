@@ -131,6 +131,7 @@ class RecommendationFeatureTest extends TestCase
             ->get(route('recommendations.index'))
             ->assertOk()
             ->assertViewHas('activeGenre', 'Horreur')
+            ->assertViewHas('activeGenres', ['Horreur', 'Suspense', 'Drame'])
             ->assertViewHas('selectedMood', 'Stressée')
             ->assertSee('Film du mood')
             ->assertSee('Film du genre choisi')

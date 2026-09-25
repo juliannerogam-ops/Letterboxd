@@ -90,6 +90,49 @@ body:has(.mood-dashboard) {
     cursor: pointer;
 }
 
+.profile-menu {
+    position: relative;
+    margin: 0;
+    align-self: flex-start;
+}
+
+.profile-menu-panel {
+    position: absolute;
+    top: calc(100% + 10px);
+    right: 0;
+    z-index: 10;
+    min-width: 180px;
+    padding: 6px;
+    border: 1px solid rgba(30, 41, 59, 0.1);
+    border-radius: 10px;
+    background: #fff;
+    box-shadow: 0 12px 28px rgba(20, 28, 39, 0.12);
+}
+
+.profile-menu-panel form {
+    margin: 0;
+}
+
+.profile-menu-panel button {
+    width: 100%;
+    padding: 10px 12px;
+    border: 0;
+    border-radius: 7px;
+    background: transparent;
+    color: #25334a;
+    font: inherit;
+    font-size: 0.82rem;
+    text-align: left;
+    cursor: pointer;
+}
+
+.profile-menu-panel button:hover,
+.profile-menu-panel button:focus-visible {
+    background: #f9d9ed;
+    color: #ef3298;
+    outline: 0;
+}
+
 .profile-avatar {
     color: #fff;
     font-size: 0.9rem;

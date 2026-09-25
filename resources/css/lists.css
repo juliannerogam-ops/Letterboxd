@@ -33,7 +33,8 @@ body:has(.lists-index-page) {
 }
 
 .lists-index-page {
-    width: min(1280px, calc(100vw - 90px));
+    box-sizing: border-box;
+    width: min(1280px, calc(100% - 40px));
     margin: 0 auto;
     padding: 34px 0 72px;
 }

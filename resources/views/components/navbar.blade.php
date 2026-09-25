@@ -56,28 +56,5 @@
                 Profil
             </a>
         </div>
-
-        <div class="sidebar-account">
-            <div class="account-avatar" aria-hidden="true">{{ strtoupper(substr(Auth::user()->pseudo ?: Auth::user()->name, 0, 1)) }}</div>
-            <div class="account-copy">
-                <strong>Bonjour {{ Auth::user()->pseudo ?: Auth::user()->name }} !</strong>
-                <span>Prêt pour un nouveau film ?</span>
-            </div>
-            <form method="POST" action="{{ route('logout') }}">
-                @csrf
-                <button type="submit" class="sidebar-logout">Se déconnecter</button>
-            </form>
-        </div>
-    @else
-        <div class="sidebar-links">
-            <a href="{{ route('login') }}" class="sidebar-link">
-                <span class="sidebar-icon" aria-hidden="true">→</span>
-                Connexion
-            </a>
-            <a href="{{ route('register') }}" class="sidebar-link">
-                <span class="sidebar-icon" aria-hidden="true">+</span>
-                S'inscrire
-            </a>
-        </div>
     @endauth
 </nav>

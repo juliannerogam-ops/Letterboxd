@@ -50,6 +50,7 @@ class RecommendationController extends Controller
         return view('recommendations.index', [
             'films' => $films,
             'activeGenre' => $activeGenre !== '' ? $activeGenre : 'Tous',
+            'activeGenres' => $showAllFilms ? ['Tous'] : $filterGenres,
             'selectedMood' => $selectedMood,
             'moodIntensity' => $moodIntensity,
             'genres' => array_keys($genreAliases),

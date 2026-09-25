@@ -22,7 +22,7 @@
     <nav class="recommendation-filters" aria-label="Filtrer les recommandations">
         @foreach ($genres as $genre)
             <a
-                class="recommendation-filter {{ $activeGenre === $genre ? 'is-active' : '' }}"
+                class="recommendation-filter {{ $activeGenre === $genre ? 'is-active' : '' }} {{ in_array($genre, $activeGenres, true) ? 'is-mood-active' : '' }}"
                 href="{{ route('recommendations.index', $genre === 'Tous' ? [] : ['genre' => $genre]) }}"
                 aria-current="{{ $activeGenre === $genre ? 'page' : 'false' }}"
             >

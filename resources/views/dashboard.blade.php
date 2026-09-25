@@ -13,9 +13,21 @@
             >
         </form>
 
-        <button type="button" class="profile-trigger" aria-label="Profil">
-            <span class="profile-avatar">{{ strtoupper(substr(Auth::user()->pseudo ?: Auth::user()->name, 0, 1)) }}</span>
-        </button>
+        <div class="profile-menu">
+            <button type="button" class="profile-trigger" aria-label="Ouvrir le menu du compte" aria-expanded="false" aria-controls="profile-menu-panel">
+                <span class="profile-avatar">{{ strtoupper(substr(Auth::user()->pseudo ?: Auth::user()->name, 0, 1)) }}</span>
+            </button>
+            <div id="profile-menu-panel" class="profile-menu-panel" hidden>
+                <form method="POST" action="{{ route('logout') }}">
+                    @csrf
+                    <button type="submit">Changer de compte</button>
+                </form>
+                <form method="POST" action="{{ route('logout') }}">
+                    @csrf
+                    <button type="submit">Se déconnecter</button>
+                </form>
+            </div>
+        </div>
     </header>
 
     <section class="mood-hero" aria-labelledby="mood-hero-title">
@@ -71,7 +83,7 @@
 
     <section class="legacy-block recommendation-block">
         <h3>Recommandations</h3>
-        <p class="muted-copy">Suggestions pour le genre : {{ $genre }}</p>
+        <p class="muted-copy">Suggestions pour le genre : {{ implode(', ', $preferredGenres) }}</p>
 
         <div class="nested-section">
             <div class="watchlist-heading">
@@ -268,6 +280,28 @@
             </section>
         </div>
     </section>
+
+    <script>
+        const profileMenu = document.querySelector('.profile-menu');
+        const profileTrigger = profileMenu?.querySelector('.profile-trigger');
+        const profileMenuPanel = profileMenu?.querySelector('.profile-menu-panel');
+
+        profileTrigger?.addEventListener('click', () => {
+            const isOpen = profileTrigger.getAttribute('aria-expanded') === 'true';
+            profileTrigger.setAttribute('aria-expanded', String(!isOpen));
+            profileMenuPanel.hidden = isOpen;
+        });
+
+        document.addEventListener('click', (event) => {
+            if (!profileMenu?.contains(event.target)) {
+                profileTrigger?.setAttribute('aria-expanded', 'false');
+
+                if (profileMenuPanel) {
+                    profileMenuPanel.hidden = true;
+                }
+            }
+        });
+    </script>
 
     <script type="application/json" id="release-films-data">@json($releaseFilms)</script>
 

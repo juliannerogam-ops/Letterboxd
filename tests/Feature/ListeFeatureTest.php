@@ -52,11 +52,24 @@ class ListeFeatureTest extends TestCase
             ->withSession([
                 'preferred_mood' => 'Calme',
                 'preferred_genre' => 'Drame',
+                'preferred_genres' => ['Drame', 'Comédie', 'Documentaire'],
             ])
             ->get(route('dashboard'));
 
         $response->assertOk();
-        $response->assertSee('mood-dashboard has-selected-mood', false);
+        $response->assertSee('mood-dashboard has-selected-mood', false)
+            ->assertSee('Suggestions pour le genre : Drame, Comédie, Documentaire');
+    }
+
+    public function test_dashboard_profile_menu_offers_account_switch_and_logout_actions(): void
+    {
+        $response = $this->actingAs(User::factory()->create())
+            ->get(route('dashboard'));
+
+        $response->assertOk()
+            ->assertSee('Changer de compte')
+            ->assertSee('Se déconnecter')
+            ->assertSee('aria-controls="profile-menu-panel"', false);
     }
 
     public function test_dashboard_creates_a_top_five_when_missing(): void
