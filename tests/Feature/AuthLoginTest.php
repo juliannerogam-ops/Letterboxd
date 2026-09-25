@@ -31,4 +31,24 @@ class AuthLoginTest extends TestCase
 
         $this->assertGuest();
     }
+
+    public function test_guest_can_register_without_being_redirected_to_the_admin_film_list(): void
+    {
+        $response = $this->post(route('register'), [
+            'email' => 'new-user@example.com',
+            'name' => 'Durand',
+            'first_name' => 'Camille',
+            'pseudo' => 'camille-durand',
+            'password' => 'password123',
+            'password_confirmation' => 'password123',
+        ]);
+
+        $response->assertRedirect(route('recommendations.genre.create'));
+        $this->assertAuthenticated();
+        $this->assertDatabaseHas('users', [
+            'email' => 'new-user@example.com',
+            'pseudo' => 'camille-durand',
+            'is_admin' => false,
+        ]);
+    }
 }

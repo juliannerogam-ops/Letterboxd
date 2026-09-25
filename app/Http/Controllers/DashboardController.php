@@ -83,26 +83,30 @@ class DashboardController extends Controller
 
         $topFive->load('films');
 
-        $recommendations = Film::query()
-            ->where(function ($query) use ($preferredGenres): void {
-                foreach ($preferredGenres as $preferredGenre) {
-                    $query->orWhere('genre', 'like', '%'.$preferredGenre.'%');
-                }
-            })
-            ->when($preferredMoodTitles !== [], function ($query) use ($preferredMoodTitles): void {
-                $query->orWhereIn('titre', $preferredMoodTitles);
-            })
-            ->whereNotIn('id', $watchlistFilms->pluck('id'))
-            ->orderByRaw('CASE WHEN genre LIKE ? THEN 0 ELSE 1 END', ['%'.$genre.'%'])
-            ->orderByRaw("CASE WHEN affiche_url IS NULL OR affiche_url = '' THEN 1 ELSE 0 END")
-            ->orderBy('titre')
-            ->get()
-            ->sortBy(function (Film $film) use ($preferredMoodTitles): int {
-                $position = array_search($film->titre, $preferredMoodTitles, true);
+        $recommendations = collect();
 
-                return $position === false ? PHP_INT_MAX : $position;
-            })
-            ->values();
+        if ($mood) {
+            $recommendations = Film::query()
+                ->where(function ($query) use ($preferredGenres): void {
+                    foreach ($preferredGenres as $preferredGenre) {
+                        $query->orWhere('genre', 'like', '%'.$preferredGenre.'%');
+                    }
+                })
+                ->when($preferredMoodTitles !== [], function ($query) use ($preferredMoodTitles): void {
+                    $query->orWhereIn('titre', $preferredMoodTitles);
+                })
+                ->whereNotIn('id', $watchlistFilms->pluck('id'))
+                ->orderByRaw('CASE WHEN genre LIKE ? THEN 0 ELSE 1 END', ['%'.$genre.'%'])
+                ->orderByRaw("CASE WHEN affiche_url IS NULL OR affiche_url = '' THEN 1 ELSE 0 END")
+                ->orderBy('titre')
+                ->get()
+                ->sortBy(function (Film $film) use ($preferredMoodTitles): int {
+                    $position = array_search($film->titre, $preferredMoodTitles, true);
+
+                    return $position === false ? PHP_INT_MAX : $position;
+                })
+                ->values();
+        }
 
         $summerBlockbusters = Film::query()
             ->whereBetween('date_sortie', ['2026-07-01', '2026-08-31'])

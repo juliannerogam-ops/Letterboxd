@@ -257,7 +257,7 @@
                     <div class="error-text">{{ $message }}</div>
                 @enderror
 
-                <button type="submit" class="primary-btn">Se connecter</button>
+                <button type="submit" class="primary-btn">Créer mon compte</button>
             </form>
 
             <p class="switch-text">

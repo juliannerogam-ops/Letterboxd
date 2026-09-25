@@ -83,7 +83,11 @@
 
     <section class="legacy-block recommendation-block">
         <h3>Recommandations</h3>
-        <p class="muted-copy">Suggestions pour le genre : {{ implode(', ', $preferredGenres) }}</p>
+        @if ($mood)
+            <p class="muted-copy">Suggestions pour le genre : {{ implode(', ', $preferredGenres) }}</p>
+        @else
+            <p class="muted-copy">Lance le test de mood pour recevoir des recommandations personnalisées.</p>
+        @endif
 
         <div class="nested-section">
             <div class="watchlist-heading">
@@ -115,7 +119,7 @@
                 <div>
                     <h4>{{ $mood ? 'Films pour ton mood : '.$mood : 'On pense que ça pourrait vous plaire aussi' }}</h4>
                     <p class="recommendation-subtitle">
-                        {{ $mood ? 'Une sélection de '.$genre.' pour accompagner ton mood.' : 'Une sélection de films pour vous.' }}
+                        {{ $mood ? 'Une sélection de '.implode(', ', $preferredGenres).' pour accompagner ton mood.' : 'Aucune recommandation avant d’avoir choisi ton mood.' }}
                     </p>
                 </div>
                 <a class="recommendation-see-all" href="{{ route('recommendations.index') }}">Voir tout</a>
@@ -124,8 +128,9 @@
                 $suggestedFilms = $recommendations->take(5);
             @endphp
 
-            <div class="recommendation-grid">
-                @foreach ($suggestedFilms as $film)
+            @if ($suggestedFilms->isNotEmpty())
+                <div class="recommendation-grid">
+                    @foreach ($suggestedFilms as $film)
                     <a class="recommendation-card" href="{{ route('film.show', ['id' => $film->id]) }}">
                         @if ($film->hasVerifiedPoster())
                             <img src="{{ $film->affiche_url }}" alt="Affiche de {{ $film->titre }}" onerror="this.classList.add('is-broken'); this.nextElementSibling.classList.add('is-visible')">
@@ -136,16 +141,19 @@
                         <strong>{{ $film->titre }}</strong>
                         <span>{{ $film->genre ?? 'Film' }}</span>
                     </a>
-                @endforeach
+                    @endforeach
 
-                @for ($i = $suggestedFilms->count(); $i < 5; $i++)
-                    <div class="recommendation-card recommendation-card--placeholder">
-                        <span class="recommendation-card-placeholder" aria-hidden="true"></span>
-                        <strong>À découvrir</strong>
-                        <span>Prochainement</span>
-                    </div>
-                @endfor
-            </div>
+                    @for ($i = $suggestedFilms->count(); $i < 5; $i++)
+                        <div class="recommendation-card recommendation-card--placeholder">
+                            <span class="recommendation-card-placeholder" aria-hidden="true"></span>
+                            <strong>À découvrir</strong>
+                            <span>Prochainement</span>
+                        </div>
+                    @endfor
+                </div>
+            @else
+                <p class="recommendation-empty">Tes recommandations apparaîtront ici après le test de mood.</p>
+            @endif
         </div>
     </section>
 

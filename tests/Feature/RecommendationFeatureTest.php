@@ -208,7 +208,11 @@ class RecommendationFeatureTest extends TestCase
             ->assertRedirect(route('dashboard'));
 
         $this->actingAs($user)
-            ->withSession(['preferred_genre' => 'Aventure'])
+            ->withSession([
+                'preferred_genre' => 'Aventure',
+                'preferred_genres' => ['Aventure'],
+                'preferred_mood' => 'Ne sais pas trop',
+            ])
             ->get(route('dashboard'))
             ->assertOk()
             ->assertViewHas('recommendations', function ($recommendations) use ($matchingFilm, $otherFilm): bool {

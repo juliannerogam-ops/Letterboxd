@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Liste;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
-use App\Models\Liste;
-use App\Models\User;
 
 class AuthController extends Controller
 {
@@ -29,7 +29,7 @@ class AuthController extends Controller
         Liste::createDefaultsFor($user);
         Auth::login($user);
 
-        return redirect()->route('film.list');
+        return redirect()->route('recommendations.genre.create');
     }
 
     public function showLogin()
@@ -58,7 +58,7 @@ class AuthController extends Controller
             unset($validated['password']);
         }
 
-    unset($validated['current_password']);
+        unset($validated['current_password']);
         unset($validated['password_confirmation']);
         $user->update($validated);
 
@@ -83,7 +83,7 @@ class AuthController extends Controller
         if ($request->user()->is_admin) {
             return redirect()->route('admin.index');
         }
-        
+
         return redirect()->route('recommendations.genre.create');
     }
 

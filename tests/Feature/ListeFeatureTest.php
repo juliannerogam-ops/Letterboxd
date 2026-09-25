@@ -44,6 +44,23 @@ class ListeFeatureTest extends TestCase
         $this->assertSame('Action', session('preferred_genre') ?? 'Action');
     }
 
+    public function test_dashboard_has_no_recommendations_before_a_mood_is_selected(): void
+    {
+        $user = User::factory()->create();
+        $film = Film::create([
+            'tmdb_id' => 3000,
+            'titre' => 'Film action par défaut',
+            'genre' => 'Action',
+        ]);
+
+        $this->actingAs($user)
+            ->get(route('dashboard'))
+            ->assertOk()
+            ->assertViewHas('recommendations', fn ($recommendations): bool => $recommendations->isEmpty())
+            ->assertSee('Lance le test de mood pour recevoir des recommandations personnalisées.')
+            ->assertDontSee($film->titre);
+    }
+
     public function test_dashboard_places_recommendations_before_blockbusters_after_mood_selection(): void
     {
         $user = User::factory()->create();
