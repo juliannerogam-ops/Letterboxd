@@ -101,4 +101,15 @@ class ListeController extends Controller
         return redirect()->route('listes.show', $liste)
             ->with('status', 'Film retiré de la liste.');
     }
+
+    public function destroy(Request $request, Liste $liste): RedirectResponse
+    {
+        abort_unless($liste->user_id === $request->user()->id, 403);
+        abort_unless($liste->isDeletable(), 403);
+
+        $liste->delete();
+
+        return redirect()->route('listes')
+            ->with('status', 'Liste supprimée.');
+    }
 }

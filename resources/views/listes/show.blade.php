@@ -12,6 +12,13 @@
                     <p>Les films que tu veux garder près de toi.</p>
                 @endif
             </div>
+            @if ($liste->isDeletable())
+                <form method="POST" action="{{ route('listes.destroy', $liste) }}" onsubmit="return confirm('Supprimer définitivement cette liste ?')">
+                    @csrf
+                    @method('DELETE')
+                    <button class="list-delete-button" type="submit">Supprimer la liste</button>
+                </form>
+            @endif
         </div>
     </header>
 

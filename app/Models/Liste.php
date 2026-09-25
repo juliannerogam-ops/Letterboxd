@@ -3,9 +3,9 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Illuminate\Database\Eloquent\Model;
 
 class Liste extends Model
 {
@@ -40,6 +40,11 @@ class Liste extends Model
     public function isTopFive(): bool
     {
         return $this->type === self::TYPE_TOP_FIVE;
+    }
+
+    public function isDeletable(): bool
+    {
+        return ! in_array($this->type, [self::TYPE_WATCHLIST, self::TYPE_TOP_FIVE], true);
     }
 
     public function user(): BelongsTo

@@ -72,6 +72,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/listes/create', [ListeController::class, 'create'])->name('listes.create');
     Route::post('/listes', [ListeController::class, 'store'])->name('listes.store');
     Route::get('/listes/{liste}', [ListeController::class, 'show'])->name('listes.show');
+    Route::delete('/listes/{liste}', [ListeController::class, 'destroy'])->name('listes.destroy');
     Route::post('/listes/{liste}/films', [ListeController::class, 'addFilm'])->name('listes.films.store');
     Route::delete('/listes/{liste}/films/{film}', [ListeController::class, 'removeFilm'])->name('listes.films.destroy');
 });

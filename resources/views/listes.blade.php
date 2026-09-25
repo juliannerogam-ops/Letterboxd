@@ -51,7 +51,16 @@
 					</a>
 					<div class="lists-index-footer">
 						<span class="lists-index-count">{{ $list->films->count() }} films</span>
-						<span class="lists-index-open">Ouvrir la liste</span>
+						<span class="lists-index-footer-actions">
+							@if ($list->isDeletable())
+								<form method="POST" action="{{ route('listes.destroy', $list) }}" onsubmit="return confirm('Supprimer définitivement cette liste ?')">
+									@csrf
+									@method('DELETE')
+									<button class="lists-index-delete" type="submit">Supprimer</button>
+								</form>
+							@endif
+							<a class="lists-index-open" href="{{ route('listes.show', $list) }}">Ouvrir la liste</a>
+						</span>
 					</div>
 				</article>
 			@endforeach

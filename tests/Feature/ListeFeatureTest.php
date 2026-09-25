@@ -338,4 +338,51 @@ class ListeFeatureTest extends TestCase
             'film_id' => $film->id,
         ]);
     }
+
+    public function test_user_can_delete_a_custom_list(): void
+    {
+        $user = User::factory()->create();
+        $liste = $user->listes()->create([
+            'titre' => 'Ma collection',
+            'type' => Liste::TYPE_FAVORITES,
+        ]);
+
+        $this->actingAs($user)
+            ->delete(route('listes.destroy', $liste))
+            ->assertRedirect(route('listes'));
+
+        $this->assertDatabaseMissing('listes', ['id' => $liste->id]);
+    }
+
+    public function test_watchlist_and_top_five_cannot_be_deleted(): void
+    {
+        $user = User::factory()->create();
+        Liste::createDefaultsFor($user);
+
+        $watchlist = $user->listes()->where('type', Liste::TYPE_WATCHLIST)->firstOrFail();
+        $topFive = $user->listes()->where('type', Liste::TYPE_TOP_FIVE)->firstOrFail();
+
+        $this->actingAs($user)->delete(route('listes.destroy', $watchlist))->assertForbidden();
+        $this->actingAs($user)->delete(route('listes.destroy', $topFive))->assertForbidden();
+
+        $this->assertDatabaseHas('listes', ['id' => $watchlist->id]);
+        $this->assertDatabaseHas('listes', ['id' => $topFive->id]);
+    }
+
+    public function test_user_cannot_delete_another_users_list(): void
+    {
+        $owner = User::factory()->create();
+        $liste = $owner->listes()->create([
+            'titre' => 'Collection privée',
+            'type' => Liste::TYPE_FAVORITES,
+        ]);
+
+        $other = User::factory()->create();
+
+        $this->actingAs($other)
+            ->delete(route('listes.destroy', $liste))
+            ->assertForbidden();
+
+        $this->assertDatabaseHas('listes', ['id' => $liste->id]);
+    }
 }

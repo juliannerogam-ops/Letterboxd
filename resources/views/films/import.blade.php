@@ -7,12 +7,6 @@
     </a>
 
     <section class="film-import-shell">
-        <div class="film-import-art" aria-hidden="true">
-            <span class="film-import-art-label">TMDb</span>
-            <span class="film-import-art-title">Une nouvelle<br>histoire à<br>ajouter.</span>
-            <span class="film-import-art-mark">+</span>
-        </div>
-
         <div class="film-import-content">
             <span class="film-detail-kicker">Ajouter au catalogue</span>
             <h1>Importer un film<br>depuis TMDb</h1>
@@ -46,5 +40,3 @@
         </div>
     </section>
 </main>
-
-<a href="{{ route('film.list') }}">Retour a la liste des films</a>
