@@ -500,9 +500,10 @@ body:has(.lists-index-page) {
 .list-submit {
     display: inline-flex;
     align-items: center;
+    flex: 0 0 auto;
     gap: 10px;
     height: 42px;
-    padding: 0 16px;
+    padding: 0 20px;
     border: 0;
     border-radius: 4px;
     background: #152238;
@@ -510,6 +511,7 @@ body:has(.lists-index-page) {
     font: inherit;
     font-size: 0.82rem;
     font-weight: 700;
+    white-space: nowrap;
     cursor: pointer;
     font-family: var(--list-font);
     transition: transform 180ms ease, box-shadow 180ms ease, background 180ms ease;
