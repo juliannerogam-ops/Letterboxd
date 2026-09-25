@@ -72,11 +72,14 @@ class FilmFeatureTest extends TestCase
             'tmdb_id' => 103,
             'titre' => 'Film avec affiche',
             'affiche_url' => 'https://image.tmdb.org/t/p/w500/poster.jpg',
+            'description' => 'Un synopsis de démonstration.',
         ]);
 
         $this->get(route('film.show', ['id' => $film->id]))
             ->assertOk()
             ->assertSee('https://image.tmdb.org/t/p/w500/poster.jpg')
-            ->assertSee('Affiche du film Film avec affiche');
+            ->assertSee('Affiche du film Film avec affiche')
+            ->assertSee('Synopsis')
+            ->assertSee('Un synopsis de démonstration.');
     }
 }
