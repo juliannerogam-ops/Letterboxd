@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Film;
+use App\Models\Liste;
+use App\Models\User;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -82,7 +84,18 @@ class RecommendationController extends Controller
                 $validated['genre'],
                 ...$this->moodGenres()[$validated['mood']],
             ])));
+            $request->session()->put('preferred_mood_genres', $this->moodGenres()[$validated['mood']]);
             $request->session()->put('preferred_mood_titles', $this->moodFilms()[$validated['mood']]);
+
+            $watchlistFilmsByMood = $request->session()->get('watchlist_films_by_mood', []);
+            if (! array_key_exists($validated['mood'], $watchlistFilmsByMood)) {
+                $watchlistFilmsByMood[$validated['mood']] = $this->addMoodFilmsToWatchlist(
+                    $request->user(),
+                    $request->session()->get('preferred_mood_genres'),
+                    $request->session()->get('preferred_mood_titles'),
+                );
+                $request->session()->put('watchlist_films_by_mood', $watchlistFilmsByMood);
+            }
         }
 
         return redirect()->route('dashboard');
@@ -93,9 +106,11 @@ class RecommendationController extends Controller
         $request->session()->forget([
             'preferred_genre',
             'preferred_genres',
+            'preferred_mood_genres',
             'preferred_mood',
             'mood_intensity',
             'preferred_mood_titles',
+            'watchlist_films_by_mood',
         ]);
 
         return redirect()->route('dashboard');
@@ -142,6 +157,52 @@ class RecommendationController extends Controller
             ->all();
 
         return array_values(array_unique([...$presetGenres, ...$filmGenres]));
+    }
+
+    /**
+     * @param  list<string>  $preferredGenres
+     * @param  list<string>  $moodTitles
+     */
+    private function addMoodFilmsToWatchlist(User $user, array $preferredGenres, array $moodTitles): array
+    {
+        $watchlist = $user->listes()->firstOrCreate(
+            ['type' => Liste::TYPE_WATCHLIST],
+            ['titre' => 'Watchlist'],
+        );
+        $existingFilmIds = $watchlist->films()->pluck('film.id');
+        $genreTerms = collect($preferredGenres)
+            ->flatMap(fn (string $genre): array => $this->genreAliases()[$genre] ?? [$genre])
+            ->unique()
+            ->all();
+
+        $films = Film::query()
+            ->whereNotIn('id', $existingFilmIds)
+            ->where(function ($query) use ($genreTerms, $moodTitles): void {
+                foreach ($genreTerms as $genreTerm) {
+                    $query->orWhere('genre', 'like', '%'.$genreTerm.'%');
+                }
+
+                if ($moodTitles !== []) {
+                    $query->orWhereIn('titre', $moodTitles);
+                }
+            })
+            ->when($moodTitles !== [], function ($query) use ($moodTitles): void {
+                $placeholders = implode(', ', array_fill(0, count($moodTitles), '?'));
+                $query->orderByRaw(
+                    "CASE WHEN titre IN ($placeholders) THEN 0 ELSE 1 END",
+                    $moodTitles,
+                );
+            })
+            ->orderByDesc('avis_count')
+            ->orderBy('titre')
+            ->limit(4)
+            ->pluck('id');
+
+        if ($films->isNotEmpty()) {
+            $watchlist->films()->syncWithoutDetaching($films->all());
+        }
+
+        return $films->all();
     }
 
     private function moodGenres(): array

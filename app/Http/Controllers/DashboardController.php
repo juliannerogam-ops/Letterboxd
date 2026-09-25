@@ -23,8 +23,10 @@ class DashboardController extends Controller
 
         $genre = $request->session()->get('preferred_genre', 'Action');
         $preferredGenres = $request->session()->get('preferred_genres', [$genre]);
+        $preferredMoodGenres = $request->session()->get('preferred_mood_genres', $preferredGenres);
         $preferredMoodTitles = $request->session()->get('preferred_mood_titles', []);
         $mood = $request->session()->get('preferred_mood');
+        $watchlistFilmsByMood = $request->session()->get('watchlist_films_by_mood', []);
 
         if (! $request->session()->has('preferred_genre')) {
             $request->session()->put('preferred_genre', $genre);
@@ -38,7 +40,17 @@ class DashboardController extends Controller
         $watchlistFilmIds = $watchlist?->films()->pluck('film.id')->all() ?? [];
         $watchlistFilms = $mood && $watchlist
             ? $watchlist->films()
-                ->where('genre', 'like', '%'.$genre.'%')
+                ->when(isset($watchlistFilmsByMood[$mood]), function ($query) use ($watchlistFilmsByMood, $mood): void {
+                    $query->whereIn('film.id', $watchlistFilmsByMood[$mood]);
+                })
+                ->when(! isset($watchlistFilmsByMood[$mood]), function ($query) use ($preferredMoodGenres): void {
+                    $query->where(function ($genreQuery) use ($preferredMoodGenres): void {
+                        foreach ($preferredMoodGenres as $preferredMoodGenre) {
+                            $genreQuery->orWhere('genre', 'like', '%'.$preferredMoodGenre.'%');
+                        }
+                    });
+                })
+                ->limit(4)
                 ->get()
             : collect();
 
@@ -88,15 +100,15 @@ class DashboardController extends Controller
 
         if ($mood) {
             $recommendations = Film::query()
-                ->where(function ($query) use ($preferredGenres): void {
-                    foreach ($preferredGenres as $preferredGenre) {
-                        $query->orWhere('genre', 'like', '%'.$preferredGenre.'%');
+                ->where(function ($query) use ($preferredMoodGenres): void {
+                    foreach ($preferredMoodGenres as $preferredMoodGenre) {
+                        $query->orWhere('genre', 'like', '%'.$preferredMoodGenre.'%');
                     }
                 })
                 ->when($preferredMoodTitles !== [], function ($query) use ($preferredMoodTitles): void {
                     $query->orWhereIn('titre', $preferredMoodTitles);
                 })
-                ->whereNotIn('id', $watchlistFilms->pluck('id'))
+                ->whereNotIn('id', $watchlistFilmIds)
                 ->orderByRaw('CASE WHEN genre LIKE ? THEN 0 ELSE 1 END', ['%'.$genre.'%'])
                 ->orderByRaw("CASE WHEN affiche_url IS NULL OR affiche_url = '' THEN 1 ELSE 0 END")
                 ->orderBy('titre')

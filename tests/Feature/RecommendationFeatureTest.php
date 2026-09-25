@@ -31,9 +31,11 @@ class RecommendationFeatureTest extends TestCase
             ->assertSessionMissing([
                 'preferred_genre',
                 'preferred_genres',
+                'preferred_mood_genres',
                 'preferred_mood',
                 'mood_intensity',
                 'preferred_mood_titles',
+                'watchlist_films_by_mood',
             ]);
     }
 
@@ -245,6 +247,105 @@ class RecommendationFeatureTest extends TestCase
             ->assertViewHas('recommendations', function ($recommendations): bool {
                 return $recommendations->count() >= 10
                     && $recommendations->every(fn (Film $film): bool => str_contains($film->genre, 'Aventure'));
+            });
+    }
+
+    public function test_confirming_a_mood_adds_four_compatible_films_to_the_watchlist(): void
+    {
+        $user = User::factory()->create();
+
+        foreach (range(1, 6) as $filmNumber) {
+            Film::create([
+                'tmdb_id' => 500 + $filmNumber,
+                'titre' => 'Film watchlist mood '.$filmNumber,
+                'genre' => 'Aventure',
+                'avis_count' => 100 - $filmNumber,
+            ]);
+        }
+
+        $this->actingAs($user)
+            ->post(route('recommendations.genre.store'), [
+                'genre' => 'Aventure',
+                'mood' => 'Heureuse',
+            ])
+            ->assertRedirect(route('dashboard'));
+
+        $watchlist = $user->listes()
+            ->where('type', Liste::TYPE_WATCHLIST)
+            ->firstOrFail();
+
+        $this->assertSame(4, $watchlist->films()->count());
+        $this->assertSame(
+            [
+                'Film watchlist mood 1',
+                'Film watchlist mood 2',
+                'Film watchlist mood 3',
+                'Film watchlist mood 4',
+            ],
+            $watchlist->films()->pluck('titre')->all(),
+        );
+    }
+
+    public function test_dashboard_displays_automatically_added_mood_films_in_the_watchlist(): void
+    {
+        $user = User::factory()->create();
+        $film = Film::create([
+            'tmdb_id' => 600,
+            'titre' => 'Film comedie du mood',
+            'genre' => 'Comédie',
+        ]);
+
+        $this->actingAs($user)
+            ->post(route('recommendations.genre.store'), [
+                'genre' => 'Aventure',
+                'mood' => 'Heureuse',
+            ])
+            ->assertRedirect(route('dashboard'));
+
+        $this->assertSame(['Romantique', 'Comédie', 'Aventure'], session('preferred_mood_genres'));
+
+        $this->get(route('dashboard'))
+            ->assertViewHas('watchlistFilms', fn ($watchlistFilms): bool => $watchlistFilms->contains($film))
+            ->assertSee($film->titre);
+    }
+
+    public function test_different_moods_add_different_films_to_the_watchlist(): void
+    {
+        $user = User::factory()->create();
+
+        foreach (range(1, 8) as $filmNumber) {
+            Film::create([
+                'tmdb_id' => 700 + $filmNumber,
+                'titre' => 'Film humeur '.$filmNumber,
+                'genre' => $filmNumber <= 4 ? 'Comédie' : 'Suspense',
+                'avis_count' => 100 - $filmNumber,
+            ]);
+        }
+
+        $this->actingAs($user)
+            ->post(route('recommendations.genre.store'), [
+                'genre' => 'Aventure',
+                'mood' => 'Heureuse',
+            ])
+            ->assertRedirect(route('dashboard'));
+
+        $this->post(route('recommendations.genre.store'), [
+            'genre' => 'Aventure',
+            'mood' => 'Stressée',
+        ])->assertRedirect(route('dashboard'));
+
+        $watchlist = $user->listes()
+            ->where('type', Liste::TYPE_WATCHLIST)
+            ->firstOrFail();
+
+        $this->assertSame(8, $watchlist->films()->count());
+        $this->assertSame(8, $watchlist->films()->pluck('titre')->unique()->count());
+
+        $this->get(route('dashboard'))
+            ->assertViewHas('watchlistFilms', function ($watchlistFilms): bool {
+                return $watchlistFilms->every(
+                    fn (Film $film): bool => str_contains($film->genre, 'Suspense'),
+                );
             });
     }
 
