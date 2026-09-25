@@ -108,6 +108,18 @@ body:has(.recommendation-results) {
     padding: 0 0 8px;
 }
 
+.result-film-link {
+    display: block;
+    color: inherit;
+    text-decoration: none;
+}
+
+.result-film-link:hover h2,
+.result-film-link:focus-visible h2 {
+    text-decoration: underline;
+    text-underline-offset: 3px;
+}
+
 .result-film-card img,
 .result-film-poster-placeholder {
     display: block;

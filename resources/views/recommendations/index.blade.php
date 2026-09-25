@@ -33,7 +33,7 @@
 
     <section class="recommendation-results-grid" aria-label="Films recommandés">
         @forelse ($films as $film)
-            <article class="result-film-card">
+        <a class="result-film-card result-film-link" href="{{ route('film.show', ['id' => $film->id]) }}">
                 @if ($film->hasVerifiedPoster())
                     <img src="{{ $film->affiche_url }}" alt="Affiche de {{ $film->titre }}" onerror="this.classList.add('is-broken'); this.nextElementSibling.classList.add('is-visible')">
                     <div class="result-film-poster-placeholder poster-fallback" aria-label="Affiche indisponible"></div>
@@ -65,7 +65,7 @@
                         {{ $film->date_sortie->format('d/m/Y') }}
                     </time>
                 @endif
-            </article>
+            </a>
         @empty
             @for ($i = 0; $i < 8; $i++)
                 <article class="result-film-card result-film-card--placeholder">

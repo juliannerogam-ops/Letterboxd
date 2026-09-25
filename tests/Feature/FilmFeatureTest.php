@@ -43,6 +43,29 @@ class FilmFeatureTest extends TestCase
             ->assertForbidden();
     }
 
+    public function test_authenticated_user_can_search_films_from_the_dashboard(): void
+    {
+        $user = User::factory()->create();
+        $matchingFilm = Film::create([
+            'tmdb_id' => 104,
+            'titre' => 'Aventure dans les étoiles',
+        ]);
+
+        Film::create([
+            'tmdb_id' => 105,
+            'titre' => 'Romance au bord de mer',
+        ]);
+
+        $this->actingAs($user)
+            ->get(route('films.search', ['q' => 'Aventure']))
+            ->assertOk()
+            ->assertViewIs('films.search')
+            ->assertViewHas('films', function ($films) use ($matchingFilm): bool {
+                return $films->contains($matchingFilm)
+                    && $films->count() === 1;
+            });
+    }
+
     public function test_film_page_displays_the_imported_poster(): void
     {
         $film = Film::create([

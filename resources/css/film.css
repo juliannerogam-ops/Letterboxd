@@ -509,6 +509,111 @@ body:has(.film-import-page) {
     padding: 32px 0 72px;
 }
 
+.film-search-page {
+    width: min(1120px, calc(100vw - 80px));
+    margin: 0 auto;
+    padding: 48px 0 72px;
+}
+
+.film-search-header {
+    padding-bottom: 28px;
+    border-bottom: 1px solid #dfe5eb;
+}
+
+.film-search-header > span {
+    color: #e76c9e;
+    font-size: 0.72rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.film-search-header h1 {
+    margin: 10px 0 24px;
+    color: #172236;
+    font-family: Georgia, 'Times New Roman', serif;
+    font-size: clamp(2.4rem, 5vw, 4rem);
+}
+
+.film-search-form {
+    display: flex;
+    gap: 12px;
+}
+
+.film-search-form input {
+    flex: 1;
+    min-width: 0;
+    height: 44px;
+    padding: 0 14px;
+    border: 1px solid #cfd7e2;
+    font: inherit;
+}
+
+.film-search-form button {
+    height: 44px;
+    padding: 0 18px;
+    border: 0;
+    background: #172236;
+    color: #fff;
+    cursor: pointer;
+    font: inherit;
+    font-weight: 700;
+}
+
+.film-search-message {
+    margin-top: 32px;
+    color: #64748b;
+}
+
+.film-search-results {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 28px 22px;
+    margin-top: 32px;
+}
+
+.film-search-result {
+    display: flex;
+    min-width: 0;
+    flex-direction: column;
+    gap: 10px;
+    color: #172236;
+    text-decoration: none;
+}
+
+.film-search-result img,
+.film-search-placeholder {
+    width: 100%;
+    aspect-ratio: 0.68 / 1;
+    object-fit: cover;
+    background: #e8edf2;
+}
+
+.film-search-result strong,
+.film-search-result small {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.film-search-result strong {
+    font-size: 0.9rem;
+}
+
+.film-search-result small {
+    color: #7d8da3;
+}
+
+@media (max-width: 700px) {
+    .film-search-page {
+        width: calc(100% - 32px);
+    }
+
+    .film-search-results {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
 .film-back-link {
     display: inline-flex;
     align-items: center;

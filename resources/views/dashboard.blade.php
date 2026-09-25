@@ -1,9 +1,9 @@
 @include('components.navbar')
 @vite(['resources/css/dashboard.css', 'resources/css/calendar.css', 'resources/js/calendar.js'])
 
-<div class="mood-dashboard">
+<div class="mood-dashboard {{ $mood ? 'has-selected-mood' : '' }}">
     <header class="dashboard-topbar">
-        <form method="GET" action="{{ route('film.list') }}" class="topbar-search">
+        <form method="GET" action="{{ route('films.search') }}" class="topbar-search">
             <span class="search-icon" aria-hidden="true">⌕</span>
             <input
                 type="search"
