@@ -7,10 +7,15 @@
             <span class="mood-current-step">1/1</span>
         </div>
 
-        <h1>Comment est ton mood aujourd'hui ?</h1>
-        <span class="mood-subtitle">Choisis ton humeur qui te correspond le plus !</span>
-        <span class="mood-hover-status" id="mood-hover-status" aria-live="polite">
-            {{ $selectedMood ? 'Mood choisi : '.$selectedMood : 'Passe sur une carte pour la découvrir.' }}
+        <h1>Comment te sens-tu aujourd'hui&nbsp;?</h1>
+        <span class="mood-subtitle">Choisis l’humeur qui te ressemble le plus.</span>
+        <span class="mood-hover-status {{ $selectedMood ? 'is-active' : '' }}" id="mood-hover-status" aria-live="polite">
+            @if ($selectedMood)
+                <span class="mood-status-label">Ton mood</span>
+                <strong>{{ $selectedMood }}</strong>
+            @else
+                Passe sur une carte pour découvrir ton mood.
+            @endif
         </span>
 
         <div class="mood-grid" aria-label="Sélection du mood">
@@ -212,7 +217,8 @@
         function selectMood(button) {
             moodButtons.forEach((candidate) => candidate.classList.toggle('is-selected', candidate === button));
             selectedMoodInput.value = button.dataset.mood;
-            moodHoverStatus.textContent = 'Mood choisi : ' + button.dataset.mood;
+            moodHoverStatus.classList.add('is-active');
+            moodHoverStatus.innerHTML = '<span class="mood-status-label">Ton mood</span><strong>' + button.dataset.mood + '</strong>';
             renderGenres(button.dataset.mood);
         }
 
@@ -223,9 +229,13 @@
         function clearMoodPreview() {
             moodButtons.forEach((candidate) => candidate.classList.remove('is-preview'));
             const selectedMood = document.querySelector('.mood-option.is-selected');
-            moodHoverStatus.textContent = selectedMood
-                ? 'Mood choisi : ' + selectedMood.dataset.mood
-                : 'Passe sur une carte pour la découvrir.';
+            if (selectedMood) {
+                moodHoverStatus.classList.add('is-active');
+                moodHoverStatus.innerHTML = '<span class="mood-status-label">Ton mood</span><strong>' + selectedMood.dataset.mood + '</strong>';
+            } else {
+                moodHoverStatus.classList.remove('is-active');
+                moodHoverStatus.textContent = 'Passe sur une carte pour découvrir ton mood.';
+            }
         }
 
         function showStep(stepNumber) {

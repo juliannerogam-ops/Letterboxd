@@ -192,7 +192,8 @@ body:has(.mood-dashboard) {
 .hero-content h1 {
     margin: 0;
     color: #1d2430;
-    font-size: clamp(2.35rem, 4vw, 4.2rem);
+    font-family: 'Instrument Sans', 'Segoe UI', sans-serif;
+    font-size: clamp(3rem, 5vw, 4.7rem);
     font-weight: 800;
     line-height: 0.94;
     letter-spacing: -0.06em;

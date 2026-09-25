@@ -81,7 +81,10 @@ body:has(.mood-test-shell) {
 }
 
 .mood-panel h1 {
-    font-size: clamp(2rem, 2.6vw, 2.8rem);
+    font-family: 'Instrument Sans', 'Segoe UI', sans-serif;
+    font-size: clamp(3rem, 5vw, 4.7rem);
+    font-weight: 800;
+    letter-spacing: -0.07em;
 }
 
 .mood-panel h2 {
@@ -97,10 +100,37 @@ body:has(.mood-test-shell) {
 }
 
 .mood-hover-status {
-    display: block;
-    min-height: 18px;
-    margin: 8px 0 0;
+    display: inline-flex;
+    min-height: 28px;
+    align-items: center;
+    gap: 8px;
+    margin: 14px 0 0;
+    padding: 5px 11px;
+    border: 1px solid transparent;
+    border-radius: 999px;
     color: var(--muted);
+    font-size: 0.82rem;
+    line-height: 1;
+}
+
+.mood-hover-status.is-active {
+    border-color: #f1b1cb;
+    background: #fff4f8;
+    color: #8f3159;
+}
+
+.mood-status-label {
+    color: #b6597d;
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+}
+
+.mood-hover-status strong {
+    color: #172236;
+    font-size: 0.86rem;
+    font-weight: 700;
     font-size: 0.78rem;
     font-weight: 600;
 }

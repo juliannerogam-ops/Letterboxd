@@ -93,8 +93,10 @@ body {
 
 .auth-card h1 {
     margin: 0 0 48px;
-    font-size: clamp(3rem, 4.1vw, 4.7rem);
-    font-weight: 400;
+    font-family: 'Instrument Sans', 'Segoe UI', sans-serif;
+    font-size: clamp(3rem, 5vw, 4.7rem);
+    font-weight: 800;
+    letter-spacing: -0.07em;
     color: #171717;
     letter-spacing: -0.08em;
     line-height: 0.95;

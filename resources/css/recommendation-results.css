@@ -36,10 +36,10 @@ body:has(.recommendation-results) {
     margin: 0;
     max-width: 780px;
     color: #172236;
-    font-family: Georgia, 'Times New Roman', serif;
-    font-size: clamp(1.8rem, 3vw, 2.55rem);
+    font-family: 'Instrument Sans', 'Segoe UI', sans-serif;
+    font-size: clamp(2.2rem, 3.4vw, 3.2rem);
     font-weight: 700;
-    letter-spacing: -0.025em;
+    letter-spacing: -0.05em;
     line-height: 1.16;
 }
 

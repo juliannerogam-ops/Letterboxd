@@ -31,7 +31,8 @@ body:has(.admin-page) {
     max-width: 620px;
     margin: 8px 0 10px;
     color: #182235;
-    font-size: clamp(2.7rem, 6vw, 5.7rem);
+    font-family: 'Instrument Sans', 'Segoe UI', sans-serif;
+    font-size: clamp(3rem, 5vw, 4.7rem);
     font-weight: 800;
     letter-spacing: -0.075em;
     line-height: 0.88;
@@ -359,7 +360,8 @@ body:has(.admin-users-page) {
 .admin-users-header h1 {
     margin: 9px 0 10px;
     color: #101b2d;
-    font-size: clamp(2.6rem, 6vw, 5rem);
+    font-family: 'Instrument Sans', 'Segoe UI', sans-serif;
+    font-size: clamp(3rem, 5vw, 4.7rem);
     font-weight: 800;
     letter-spacing: -0.075em;
     line-height: 0.9;
