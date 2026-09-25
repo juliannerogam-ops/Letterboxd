@@ -33,13 +33,14 @@ class DashboardController extends Controller
         $watchlist = $user
             ->listes()
             ->where('type', Liste::TYPE_WATCHLIST)
-            ->with([
-                'films' => fn ($query) => $query->where('genre', 'like', '%'.$genre.'%'),
-            ])
             ->first();
 
-        $watchlistFilms = $watchlist?->films ?? collect();
         $watchlistFilmIds = $watchlist?->films()->pluck('film.id')->all() ?? [];
+        $watchlistFilms = $mood && $watchlist
+            ? $watchlist->films()
+                ->where('genre', 'like', '%'.$genre.'%')
+                ->get()
+            : collect();
 
         $topFive = $user
             ->listes()

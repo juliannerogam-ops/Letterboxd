@@ -61,6 +61,42 @@ class ListeFeatureTest extends TestCase
             ->assertDontSee($film->titre);
     }
 
+    public function test_dashboard_hides_watchlist_recommendations_after_reconnecting_without_a_mood(): void
+    {
+        $user = User::factory()->create([
+            'email' => 'watchlist-user@example.com',
+            'password' => bcrypt('password123'),
+        ]);
+        $watchlist = $user->listes()->create([
+            'titre' => 'Watchlist',
+            'type' => Liste::TYPE_WATCHLIST,
+        ]);
+        $film = Film::create([
+            'tmdb_id' => 3001,
+            'titre' => 'Film de watchlist',
+            'genre' => 'Action',
+        ]);
+        $watchlist->films()->attach($film);
+
+        $this->actingAs($user)
+            ->withSession([
+                'preferred_mood' => 'Calme',
+                'preferred_genre' => 'Action',
+                'preferred_genres' => ['Action'],
+            ])
+            ->post(route('logout'))
+            ->assertRedirect(route('login'));
+
+        $this->post('/login', [
+            'email' => 'watchlist-user@example.com',
+            'password' => 'password123',
+        ])->assertRedirect(route('recommendations.genre.create'));
+
+        $this->get(route('dashboard'))
+            ->assertViewHas('watchlistFilms', fn ($watchlistFilms): bool => $watchlistFilms->isEmpty())
+            ->assertDontSee($film->titre);
+    }
+
     public function test_dashboard_places_recommendations_before_blockbusters_after_mood_selection(): void
     {
         $user = User::factory()->create();
