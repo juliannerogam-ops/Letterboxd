@@ -321,19 +321,20 @@ body:has(.lists-index-page) {
 }
 
 .lists-index-footer-actions form {
-    display: inline-flex;
+    display: flex;
+    align-items: center;
 }
 
 .lists-index-delete {
-    display: inline-block;
+    display: block;
     background: none;
     border: none;
     padding: 0;
-    line-height: 1;
     color: #9aa4b2;
     font: inherit;
     font-size: 0.75rem;
     font-weight: 700;
+    line-height: 1;
     cursor: pointer;
     transition: color 0.15s ease;
 }
